@@ -10,5 +10,9 @@ namespace backend.Data.DbModels
     {
         public int UserStatus { get; set; }
         public string Description { get; set; }
+
+        public virtual ICollection<FavouriteMovie> FavouriteMovies { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Review> Reviews { get; set; }
     }
 }
