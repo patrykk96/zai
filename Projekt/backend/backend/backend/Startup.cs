@@ -50,7 +50,7 @@ namespace backend
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;       //TODO: change after implementing email confirmation
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;

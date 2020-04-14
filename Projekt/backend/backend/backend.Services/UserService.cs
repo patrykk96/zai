@@ -41,7 +41,7 @@ namespace backend.Services
             var user = new User()
             {
                 Email = userModel.Email,
-                UserName = userModel.Username
+                UserName = userModel.Username,
             };
 
             try
@@ -50,14 +50,14 @@ namespace backend.Services
 
                 if (createUserResult.Succeeded)
                 {
-                    //var addUserRoleResult = await _userManager.AddToRoleAsync(user, UserRole.User.ToString());
+                    var addUserRoleResult = await _userManager.AddToRoleAsync(user, UserRole.User.ToString());
 
-                    //if (addUserRoleResult.Succeeded)
-                    //{
-                    //    return result;
-                    //}
+                    if (addUserRoleResult.Succeeded)
+                    {
+                        return result;
+                    }
 
-                    //result.Error = addUserRoleResult.Errors.First().Description;
+                    result.Error = addUserRoleResult.Errors.First().Description;
 
                     return result;
                 }
