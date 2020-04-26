@@ -85,6 +85,7 @@ namespace backend
 
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = _appName, Version = "v1" });
