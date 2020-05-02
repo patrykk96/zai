@@ -15,7 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import Dashboard from "views/Dashboard.js";
+import Dashboard from "views/Dashboard.jsx";
+import AdminPanel from "views/AdminPanel.jsx"
 
 
 var routes = [
@@ -24,6 +25,13 @@ var routes = [
     name: "Dashboard",
     icon: "tim-icons icon-chart-pie-36",
     component: Dashboard,
+    layout: "/admin"
+  },
+  {
+    path: "/admin-panel",
+    name: "Panel administratora",
+    icon: "tim-icons icon-badge",
+    component: AdminPanel,
     layout: "/admin"
   },
   

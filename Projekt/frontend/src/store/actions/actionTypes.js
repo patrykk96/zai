@@ -10,3 +10,6 @@ export const LOGOUT = "LOGOUT";
 
 export const RESET_ERRORS = "RESET_ERRORS";
 
+export const MOVIE_ADD_START = "MOVIE_ADD_START";
+export const MOVIE_ADD_SUCCESS = "MOVIE_ADD_SUCCESS";
+export const MOVIE_ADD_FAILED = "MOVIE_ADD_FAILED";
