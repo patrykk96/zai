@@ -25,7 +25,7 @@ export const movieAdd = movie => {
     return dispatch => {
         dispatch(movieAddStart());
 
-        axios.post("url do uzupełnienia")
+        axios.post("/movie/addMovie/" + movie.name + "/" + movie.description, movie.image)
              .then(response =>{
                  dispatch(movieAddSuccess(response.status));
              })
