@@ -27,7 +27,7 @@ class MovieAdd extends React.Component {
 
 
     imageSelected = event => {
-        this.ListeningStateChangedEvent({image: event.target.files[0]});
+        this.setState({image: event.target.files[0]});
     }
 
     submitMovie = event => {
@@ -40,6 +40,7 @@ class MovieAdd extends React.Component {
             image: formData
         }
 
+        console.log(movie);
         event.preventDefault();
         this.props.movieAdd(movie);
     }
@@ -93,7 +94,7 @@ class MovieAdd extends React.Component {
                                         />
                                     </FormGroup>
 
-                                    <Input type="file" name="file" onChange={this.image} />
+                                    <Input type="file" name="file" onChange={this.imageSelected} />
                                     <br />
                                     
                                     <Button onClick={this.submitMovie} color="primary">Dodaj film</Button>

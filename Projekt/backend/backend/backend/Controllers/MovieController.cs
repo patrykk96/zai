@@ -26,7 +26,7 @@ namespace backend.Controllers
 
         //do czesci metod w tym kontrolerze dostep ma tylko administrator, w tym celu sprawdzana jest rola w przeslanym tokenie
         [HttpPost("addMovie/{name}/{description}")]
-        public async Task<IActionResult> AddMovie(string name, string description, ImageModel imageModel)
+        public async Task<IActionResult> AddMovie(string name, string description, [FromForm] ImageModel imageModel)
         {
             if (!ModelState.IsValid)
             {

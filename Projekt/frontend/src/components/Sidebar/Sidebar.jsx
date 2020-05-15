@@ -28,17 +28,53 @@ import PerfectScrollbar from "perfect-scrollbar";
 import { Nav, NavLink as ReactstrapNavLink } from "reactstrap";
 
 var ps;
-
+var jwtDecode = require('jwt-decode');
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.activeRoute.bind(this);
+    this.state={
+      routes: [
+        {
+          path: "/dashboard",
+          name: "Strona główna",
+          icon: "tim-icons icon-chart-pie-36",
+          layout: "/admin"
+        }
+      ]
+    }
   }
   // verifies if routeName is the one active (in browser input)
   activeRoute(routeName) {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   }
   componentDidMount() {
+    if(this.props.isAuthenticated) {
+      let token = localStorage.getItem("token");
+      let decodedToken = jwtDecode(token);
+      let role = decodedToken.Role;
+      let routes =  [
+        {
+          path: "/dashboard",
+          name: "Strona główna",
+          icon: "tim-icons icon-chart-pie-36",
+          layout: "/admin"
+        },
+
+      ]
+      if(role === "User"){
+        routes.push({
+          path: "/admin-panel",
+          name: "Panel administratora",
+          icon: "tim-icons icon-badge",
+          layout: "/admin"
+        },);
+      }
+      this.setState({
+        routes: routes
+      })
+    }
+
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.refs.sidebar, {
         suppressScrollX: true,
@@ -51,71 +87,18 @@ class Sidebar extends React.Component {
       ps.destroy();
     }
   }
+  
   linkOnClick = () => {
     document.documentElement.classList.remove("nav-open");
   };
+
   render() {
-    const { bgColor, routes, rtlActive, logo } = this.props;
-    let logoImg = null;
-    let logoText = null;
-    if (logo !== undefined) {
-      if (logo.outterLink !== undefined) {
-        logoImg = (
-          <a
-            href={logo.outterLink}
-            className="simple-text logo-mini"
-            target="_blank"
-            onClick={this.props.toggleSidebar}
-          >
-            <div className="logo-img">
-              <img src={logo.imgSrc} alt="react-logo" />
-            </div>
-          </a>
-        );
-        logoText = (
-          <a
-            href={logo.outterLink}
-            className="simple-text logo-normal"
-            target="_blank"
-            onClick={this.props.toggleSidebar}
-          >
-            {logo.text}
-          </a>
-        );
-      } else {
-        logoImg = (
-          <Link
-            to={logo.innerLink}
-            className="simple-text logo-mini"
-            onClick={this.props.toggleSidebar}
-          >
-            <div className="logo-img">
-              <img src={logo.imgSrc} alt="react-logo" />
-            </div>
-          </Link>
-        );
-        logoText = (
-          <Link
-            to={logo.innerLink}
-            className="simple-text logo-normal"
-            onClick={this.props.toggleSidebar}
-          >
-            {logo.text}
-          </Link>
-        );
-      }
-    }
+    const { bgColor } = this.props;
     return (
       <div className="sidebar" data={bgColor}>
         <div className="sidebar-wrapper" ref="sidebar">
-          {logoImg !== null || logoText !== null ? (
-            <div className="logo">
-              {logoImg}
-              {logoText}
-            </div>
-          ) : null}
           <Nav>
-            {routes.map((prop, key) => {
+            {this.state.routes.map((prop, key) => {
               if (prop.redirect) return null;
               return (
                 <li
@@ -132,21 +115,11 @@ class Sidebar extends React.Component {
                     onClick={this.props.toggleSidebar}
                   >
                     <i className={prop.icon} />
-                    <p>{rtlActive ? prop.rtlName : prop.name}</p>
+                    <big><p>{prop.name}</p></big>
                   </NavLink>
                 </li>
               );
             })}
-            <li
-              className="active-pro"
-            >
-              <ReactstrapNavLink
-                href="https://www.creative-tim.com/product/black-dashboard-pro-react?ref=bdr-user-archive-sidebar-upgrade-pro"
-              >
-                <i className="tim-icons icon-spaceship" />
-                <p>Upgrade to PRO</p>
-              </ReactstrapNavLink>
-            </li>
           </Nav>
         </div>
       </div>
@@ -155,15 +128,10 @@ class Sidebar extends React.Component {
 }
 
 Sidebar.defaultProps = {
-  rtlActive: false,
-  bgColor: "primary",
-  routes: [{}]
+  bgColor: "primary"
 };
 
 Sidebar.propTypes = {
-  // if true, then instead of the routes[i].name, routes[i].rtlName will be rendered
-  // insde the links of this component
-  rtlActive: PropTypes.bool,
   bgColor: PropTypes.oneOf(["primary", "blue", "green"]),
   routes: PropTypes.arrayOf(PropTypes.object),
   logo: PropTypes.shape({
