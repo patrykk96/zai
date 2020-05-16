@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\backend.Data\backend.Data.csproj" />
+    <ProjectReference Include="..\backend.Repository\backend.Repository.csproj" />
   </ItemGroup>
 
 </Project>

@@ -34,13 +34,15 @@ import "assets/scss/black-dashboard-react.scss";
 import "assets/demo/demo.css";
 import "assets/css/nucleo-icons.css";
 
-import authReducer from "./store/reducers/authReducer";
+import authReducer from "store/reducers/authReducer";
+import movieReducer from "store/reducers/movieReducer";
 
 setApiSettings();
 const hist = createBrowserHistory();
 
 const rootReducer = combineReducers({
-  authReducer: authReducer
+  authReducer: authReducer,
+  movieReducer: movieReducer
 });
 
 const store = createStore(

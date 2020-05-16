@@ -34,19 +34,19 @@ namespace backend.Repository
             return entity;
         }
 
-        public async void Add(T entity)
+        public async Task Add(T entity)
         {
             _dbSet.Add(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async void Update(T entity)
+        public async Task Update(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async void Delete(T entity)
+        public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
