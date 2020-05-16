@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
+    [Route("api/[controller]")]
     public class ImageController : Controller
     {
         private readonly IImageService _imageService;
@@ -17,7 +18,7 @@ namespace backend.Controllers
             _imageService = imageService;
         }
 
-        [HttpGet("api/image/{filename}")]
+        [HttpGet("{filename}")]
         public async Task<IActionResult> GetImage(string filename)
         {
             if (filename == null || filename.Length == 0)

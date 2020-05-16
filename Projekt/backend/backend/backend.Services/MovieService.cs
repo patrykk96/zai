@@ -305,7 +305,7 @@ namespace backend.Services
                 fs.Flush();
             }
 
-            path = @"https://localhost:44326/api/image/" + $"{fileName}";
+            path = @"https://localhost:44351/api/image/" + $"{fileName}";
 
             return path;
         }

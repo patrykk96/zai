@@ -22,7 +22,7 @@ import AdminPanel from "views/AdminPanel.jsx"
 var routes = [
   {
     path: "/dashboard",
-    name: "Dashboard",
+    name: "Strona główna",
     icon: "tim-icons icon-chart-pie-36",
     component: Dashboard,
     layout: "/admin"

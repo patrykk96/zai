@@ -19,6 +19,10 @@ class AdminPanel extends React.Component {
         };
     }
 
+    componentDidMount() {
+        this.props.moviesGet();
+    }
+
     toggleMovieAdd = () => {
         this.setState(prevState => ({
             toggleMovieAdd: !prevState.toggleMovieAdd
@@ -40,6 +44,9 @@ class AdminPanel extends React.Component {
                                 :
                                 <MoviePanel
                                     toggleMovieAdd={this.toggleMovieAdd}
+                                    movieEdit={this.props.movieEdit}
+                                    movieDelete={this.props.movieDelete}
+                                    movies={this.props.movies}
                                 />
                              }
                          </Col>
@@ -53,14 +60,18 @@ class AdminPanel extends React.Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-      movieAdd: (movie) => dispatch(movieActions.movieAdd(movie))
+      movieAdd: (movie) => dispatch(movieActions.movieAdd(movie)),
+      moviesGet: () => dispatch(movieActions.moviesGet()),
+      movieEdit: (movie) => dispatch(movieActions.movieEdit(movie)),
+      movieDelete: (id) => dispatch(movieActions.movieDelete(id))
     };
 };
 
 const mapStateToProps = state => {
     return {
         loading: state.movieReducer.loading,
-        error: state.movieReducer.error
+        error: state.movieReducer.error,
+        movies: state.movieReducer.movies
     };
 };
 

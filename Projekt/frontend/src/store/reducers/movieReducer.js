@@ -5,6 +5,7 @@ const initialState = {
     error: null,
     response: null,
     loading: false,
+    movies: []
 }
 
 const movieAddStart = state => {
@@ -69,10 +70,11 @@ const moviesGetStart = state => {
 }
 
 const moviesGetSuccess = (state, action) => {
+    console.log(action)
     return updateObject(state, {
         error: null,
         loading: false,
-        response: action.response
+        movies: action.response.successResult.list
     });
 }
 

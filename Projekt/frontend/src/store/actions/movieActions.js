@@ -62,7 +62,7 @@ export const movieEdit = movie => {
         const formData = new FormData();
         formData.append("Image", movie.image);
 
-        axios.patch("url do uzupelnienia")
+        axios.patch("/movie/updateMovie/" + movie.id + "/" + movie.name + "/" + movie.description, formData)
              .then(response => {
                  dispatch(movieEditSuccess(response.data));
              })
@@ -96,7 +96,7 @@ export const movieGet = movie => {
     return dispatch => {
         dispatch(movieGetStart());
 
-        axios.get("url do uzupelnienia")
+        axios.get("/movie/getMovie/" + movie)
              .then(response => {
                  dispatch(movieGetSuccess(response.data));
              })
@@ -130,7 +130,7 @@ export const moviesGet = () => {
     return dispatch => {
         dispatch(moviesGetStart());
 
-        axios.get("url do uzupelnienia")
+        axios.get("/movie/getMovies")
              .then(response => {
                  dispatch(moviesGetSuccess(response.data));
              })
@@ -164,7 +164,7 @@ export const movieDelete = movie => {
     return dispatch => {
         dispatch(movieDeleteStart());
 
-        axios.patch("url do uzupelnienia")
+        axios.delete("/movie/deleteMovie/" + movie)
              .then(response => {
                  dispatch(movieDeleteSuccess(response.data));
              })
