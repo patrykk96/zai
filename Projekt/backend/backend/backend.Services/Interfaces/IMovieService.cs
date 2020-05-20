@@ -13,7 +13,7 @@ namespace backend.Services.Interfaces
         Task<ResultDto<BaseDto>> UpdateMovie(int id, MovieModel movieModel);
         Task<ResultDto<BaseDto>> DeleteMovie(int id);
         Task<ResultDto<MovieDto>> GetMovie(int id);
-        Task<ResultDto<ListMovieDto>> GetMovies(int id);
+        Task<ResultDto<ListMovieDto>> GetMovies();
         Task<ResultDto<BaseDto>> AddReview(ReviewModel reviewModel);
         //Task<ResultDto<ReviewDto>> GetReview(int userId, int gameId);
     }

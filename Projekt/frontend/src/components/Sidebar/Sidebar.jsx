@@ -62,7 +62,7 @@ class Sidebar extends React.Component {
         },
 
       ]
-      if(role === "User"){
+      if(role === "Admin"){
         routes.push({
           path: "/admin-panel",
           name: "Panel administratora",

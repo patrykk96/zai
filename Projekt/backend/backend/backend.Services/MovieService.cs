@@ -196,7 +196,7 @@ namespace backend.Services
         }
 
         //zwrócenie listy filmow
-        public async Task<ResultDto<ListMovieDto>> GetMovies(int id)
+        public async Task<ResultDto<ListMovieDto>> GetMovies()
         {
             var result = new ResultDto<ListMovieDto>()
             {
