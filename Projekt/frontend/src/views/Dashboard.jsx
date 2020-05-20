@@ -16,47 +16,57 @@
 
 */
 import React from "react";
-// nodejs library that concatenates classes
-import classNames from "classnames";
+import { connect } from 'react-redux'
+import * as movieActions from '../store/actions/movieActions';
 
 // reactstrap components
 import {
-  Button,
-  ButtonGroup,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  Label,
-  FormGroup,
-  Input,
-  Table,
-  Row,
-  Col,
-  UncontrolledTooltip
+  Row
 } from "reactstrap";
+import MovieCardPanel from "components/Movies/MovieCardPanel";
 
 
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
+  }
 
+  componentDidMount() {
+    this.props.moviesGet();
   }
 
   render() {
     return (
       <>
         <div className="content">
-             
+             <Row>
+               <MovieCardPanel
+                  movies={this.props.movies}
+                  isAuthenticated={this.props.isAuthenticated}
+                />
+             </Row>
         </div>
       </>
     );
   }
 }
 
-export default Dashboard;
+const mapDispatchToProps = dispatch => {
+  return {
+    moviesGet: () => dispatch(movieActions.moviesGet()),
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    movies: state.movieReducer.movies,
+    loading: state.movieReducer.loading,
+    error: state.movieReducer.error
+  }
+}
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(Dashboard);

@@ -40,7 +40,6 @@ class MovieAdd extends React.Component {
             image: formData
         }
 
-        console.log(movie);
         event.preventDefault();
         this.props.movieAdd(movie);
     }

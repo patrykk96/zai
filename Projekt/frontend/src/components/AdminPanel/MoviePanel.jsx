@@ -18,7 +18,7 @@ class MoviePanel extends React.Component {
             selectedId: null,
             image: null,
             name: null,
-            description: null
+            description: null,
         }
     }
 
@@ -34,8 +34,8 @@ class MoviePanel extends React.Component {
     }
 
     enableEdit = (id) => {
-        if (this.state.selectedId !== id) {
-            this.setState({enableEdit: true})
+        if (this.state.selectedId !== id && this.state.selectedId !== null) {
+            this.setState({enabledEdit: true})
         }
         else {
             this.setState(prevState => ({
@@ -43,6 +43,7 @@ class MoviePanel extends React.Component {
             }));
         }
         this.setState({selectedId: id});
+       
     }
 
     disableEdit = (id) => {
@@ -61,12 +62,19 @@ class MoviePanel extends React.Component {
     }
 
     submitMovieDelete = (id) => {
-        this.props.movieDelete(id)
+        this.props.movieDelete(id);
+    }
+
+    calculateLength = (count) => {
+        let elementLength = 66;
+        let headerLength = 115;
+        return count * elementLength + headerLength;
     }
 
     render() {
         let movies = null;
-        console.log(this.props.movies)
+        console.log(this.state.enabledEdit);
+        let moviesLength = this.calculateLength(1);
         if (this.props.movies){
             movies = this.props.movies.map(movie => {
                return ( <MovieListElement 
@@ -82,12 +90,13 @@ class MoviePanel extends React.Component {
                             selectedId={this.state.selectedId}
                             handleInputChange={this.handleInputChange}
                             fileSelected={this.fileSelected} 
-                />)
+                />);
             });
+            moviesLength = this.calculateLength(movies.length);
         }
         return (
             <>
-                <Card className="card-tasks">
+                <Card className="card-tasks" style={{height: moviesLength}}>
                     <CardHeader>
                         <CardTitle tag="h3">
                             <i className="tim-icons icon-controller text-info" /> {" "}
@@ -106,7 +115,7 @@ class MoviePanel extends React.Component {
                                   </Button>}
                         </CardTitle>
                     </CardHeader>
-                    <CardBody>
+                    <CardBody >
                         <Table>
                             <thead className="text-primary">
                                 <tr>

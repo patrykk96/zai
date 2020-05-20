@@ -17,9 +17,14 @@ class AdminPanel extends React.Component {
         this.state = {
             toggleMovieAdd: false
         };
+
     }
 
     componentDidMount() {
+        this.getMovies();
+    }
+
+    getMovies () {
         this.props.moviesGet();
     }
 
@@ -27,6 +32,9 @@ class AdminPanel extends React.Component {
         this.setState(prevState => ({
             toggleMovieAdd: !prevState.toggleMovieAdd
         }));
+        if (this.state.toggleMovieAdd){
+            this.getMovies();
+        } 
     }
 
     render(){
@@ -47,6 +55,7 @@ class AdminPanel extends React.Component {
                                     movieEdit={this.props.movieEdit}
                                     movieDelete={this.props.movieDelete}
                                     movies={this.props.movies}
+                                    moviesGet={this.getMovies}
                                 />
                              }
                          </Col>

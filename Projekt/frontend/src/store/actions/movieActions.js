@@ -65,6 +65,7 @@ export const movieEdit = movie => {
         axios.patch("/movie/updateMovie/" + movie.id + "/" + movie.name + "/" + movie.description, formData)
              .then(response => {
                  dispatch(movieEditSuccess(response.data));
+                 dispatch(moviesGet());
              })
              .catch(error => {
                  dispatch(movieEditFailed(error.response.status));
@@ -167,6 +168,7 @@ export const movieDelete = movie => {
         axios.delete("/movie/deleteMovie/" + movie)
              .then(response => {
                  dispatch(movieDeleteSuccess(response.data));
+                 dispatch(moviesGet());
              })
              .catch(error => {
                  dispatch(movieDeleteFailed(error.response.status));
