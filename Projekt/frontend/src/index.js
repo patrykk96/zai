@@ -55,10 +55,10 @@ const app =(
     <BrowserRouter>
       <Router history={hist}>
         <Switch>
-          <Route path="/admin" render={props => <AdminLayout {...props} />} />
+          <Route path="/main" render={props => <AdminLayout {...props} />} />
           <Route path="/auth" render={props => <AuthLayout {...props} />} />
           <Route path="/logout" component={Logout} />
-          <Redirect from="/" to="/admin/dashboard" />
+          <Redirect from="/" to="/main/dashboard" />
         </Switch>
       </Router>
     </BrowserRouter>

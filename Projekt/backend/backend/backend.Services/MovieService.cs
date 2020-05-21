@@ -196,7 +196,7 @@ namespace backend.Services
         }
 
         //zwrócenie listy filmow
-        public async Task<ResultDto<ListMovieDto>> GetMovies(int id)
+        public async Task<ResultDto<ListMovieDto>> GetMovies()
         {
             var result = new ResultDto<ListMovieDto>()
             {
@@ -246,7 +246,7 @@ namespace backend.Services
 
             if (!movieExists)
             {
-                result.Error = "Nie odnaleziono gry";
+                result.Error = "Nie odnaleziono filmu";
                 return result;
             }
 
@@ -305,7 +305,15 @@ namespace backend.Services
                 fs.Flush();
             }
 
-            path = @"https://localhost:44351/api/image/" + $"{fileName}";
+            if (image.FileName.Length > 0)
+            {
+                path = @"https://localhost:44351/api/image/" + $"{fileName}";
+            }
+            else
+            {
+                path = @"https://localhost:44351/api/image/" + $"tommy-wiseau.jpg";
+            }
+            
 
             return path;
         }

@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles = "User, Admin")]
     [Route("api/[controller]")]
     public class MovieController : Controller
     {
@@ -24,7 +24,7 @@ namespace backend.Controllers
             _movieService = movieService;
         }
 
-        //do czesci metod w tym kontrolerze dostep ma tylko administrator, w tym celu sprawdzana jest rola w przeslanym tokenie
+        [Authorize(Roles = "Admin")]
         [HttpPost("addMovie/{name}/{description}")]
         public async Task<IActionResult> AddMovie(string name, string description, [FromForm] ImageModel imageModel)
         {
@@ -32,13 +32,6 @@ namespace backend.Controllers
             {
                 return BadRequest();
             }
-
-            //var role = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value);
-
-            //if (role != (int)UserRole.Admin)
-            //{
-            //    return Unauthorized();
-            //}
 
             var movieModel = new MovieModel()
             {
@@ -57,6 +50,7 @@ namespace backend.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPatch("updateMovie/{id}/{name}/{description}")]
         public async Task<IActionResult> UpdateMovie(int id, string name, string description, ImageModel imageModel)
         {
@@ -65,12 +59,6 @@ namespace backend.Controllers
                 return BadRequest();
             }
 
-            //var role = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value);
-
-            //if (role != (int)UserRoles.admin)
-            //{
-            //    return Unauthorized();
-            //}
 
             var movieModel = new MovieModel()
             {
@@ -89,6 +77,7 @@ namespace backend.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("deleteMovie/{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
@@ -97,12 +86,6 @@ namespace backend.Controllers
                 return BadRequest();
             }
 
-            //var role = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value);
-
-            //if (role != (int)UserRoles.admin)
-            //{
-            //    return Unauthorized();
-            //}
 
             var result = await _movieService.DeleteMovie(id);
 
@@ -141,9 +124,7 @@ namespace backend.Controllers
                 return BadRequest();
             }
 
-            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (id == null) id = "0";
-            var result = await _movieService.GetMovies(int.Parse(id));
+            var result = await _movieService.GetMovies();
 
             if (result.Error != null)
             {

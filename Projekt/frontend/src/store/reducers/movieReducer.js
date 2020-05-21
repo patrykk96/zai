@@ -54,7 +54,7 @@ const movieGetSuccess = (state, action) => {
     return updateObject(state, {
         error: null,
         loading: false,
-        response: action.response
+        movie: action.response.successResult
     });
 }
 
@@ -70,7 +70,6 @@ const moviesGetStart = state => {
 }
 
 const moviesGetSuccess = (state, action) => {
-    console.log(action)
     return updateObject(state, {
         error: null,
         loading: false,

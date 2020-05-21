@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 import Spinner from '../Spinner';
+import ErrorText from '../ErrorText/ErrorText';
   
 import {
     Alert,
@@ -114,12 +115,7 @@ import {
                                        Udało się zarejestrować 
                                   </Alert></> : <></>}   
 
-                                  {this.props.error !== null ? <> <br/>
-                                  <UncontrolledAlert color="danger">
-                                    <span>
-                                        {this.props.error}
-                                    </span>    
-                                  </UncontrolledAlert> </> : <> </>} </>: <Spinner />}
+                                  {this.props.error !== null ? <ErrorText error={this.props.error}></ErrorText>: <> </>} </>: <Spinner />}
                                   
                                   <br />
                                   <Label><Link to="/auth/login">Zaloguj się, </Link>jeśli masz już konto.</Label>

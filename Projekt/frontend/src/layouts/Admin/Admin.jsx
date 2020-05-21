@@ -77,7 +77,7 @@ class Admin extends React.Component {
   };
   getRoutes = routes => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/admin") {
+      if (prop.layout === "/main") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -130,7 +130,7 @@ class Admin extends React.Component {
             />
             <Switch>
               {this.getRoutes(routes)}
-              <Redirect from="*" to="/admin/dashboard"/>
+              <Redirect from="*" to="/main/dashboard"/>
             </Switch>
 
           </div>
