@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import Spinner from "../Spinner"
+import ErrorText from '../ErrorText/ErrorText';
 
 import {
     Button,
@@ -100,13 +101,7 @@ class Login extends React.Component {
                                     <Button color="info" className="btn-simple">Zaloguj</Button>
                                     {this.props.loading ? <Spinner /> : <> </>}
 
-                                    {this.props.error !== null ? <> <br/> <br/>
-                                    <UncontrolledAlert color="danger">
-                                        <span>
-                                            {this.props.error.error}
-                                        </span>
-                                    </UncontrolledAlert>
-                                    </> : <></>}
+                                    <ErrorText error={this.props.error}></ErrorText>
                                 </form>
                             </CardBody>
                         </Card>

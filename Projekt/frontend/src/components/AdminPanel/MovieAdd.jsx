@@ -9,8 +9,10 @@ import {
     Row,
     Col,
     FormGroup,
-    Input
+    Input,
+    UncontrolledAlert
 } from 'reactstrap';
+import ErrorText from 'components/ErrorText/ErrorText';
 
 
 class MovieAdd extends React.Component {
@@ -87,7 +89,7 @@ class MovieAdd extends React.Component {
                                             placeholder="Opis filmu"
                                             name="movieDescription"
                                             type="text"
-                                            maxLength="500"
+                                            maxLength="200"
                                             required
                                             onChange={event => this.handleInputChange(event)}
                                         />
@@ -97,6 +99,9 @@ class MovieAdd extends React.Component {
                                     <br />
                                     
                                     <Button onClick={this.submitMovie} color="primary">Dodaj film</Button>
+                                    
+                                    <ErrorText error={this.props.error}></ErrorText>
+
                                 </form>
                             </CardBody>
                         </Card>

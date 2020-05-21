@@ -17,6 +17,7 @@
 */
 import Dashboard from "views/Dashboard.jsx";
 import AdminPanel from "views/AdminPanel.jsx"
+import MovieDetails from "views/MovieDetails.jsx"
 
 
 var routes = [
@@ -25,14 +26,21 @@ var routes = [
     name: "Strona główna",
     icon: "tim-icons icon-chart-pie-36",
     component: Dashboard,
-    layout: "/admin"
+    layout: "/main"
   },
   {
     path: "/admin-panel",
     name: "Panel administratora",
     icon: "tim-icons icon-badge",
     component: AdminPanel,
-    layout: "/admin"
+    layout: "/main"
+  },
+  {
+    path: "/movie/:movieId",
+    name: "Szczegóły",
+    icon: "tim-icons icon-badge",
+    component: MovieDetails,
+    layout: "/main"
   },
   
 ];

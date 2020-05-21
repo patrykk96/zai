@@ -22,6 +22,7 @@ class MovieListElement extends React.Component {
                         <FormGroup>
                             <label>Edytuj tytuł</label>
                             <Input
+                                required
                                 cols="5"
                                 defaultValue={this.props.movieName}
                                 placeholder="Tytuł filmu"
@@ -35,6 +36,7 @@ class MovieListElement extends React.Component {
                         <FormGroup>
                             <label>Edytuj opis</label>
                             <Input
+                                required
                                 cols="100"
                                 defaultValue={this.props.movieDescription}
                                 placeholder="Opis filmu"

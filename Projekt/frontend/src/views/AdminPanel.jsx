@@ -48,6 +48,7 @@ class AdminPanel extends React.Component {
                                 <MovieAdd
                                     movieAdd={this.props.movieAdd}
                                     toggleMovieAdd={this.toggleMovieAdd} 
+                                    error={this.props.error}
                                 />
                                 :
                                 <MoviePanel

@@ -39,7 +39,7 @@ class Sidebar extends React.Component {
           path: "/dashboard",
           name: "Strona główna",
           icon: "tim-icons icon-chart-pie-36",
-          layout: "/admin"
+          layout: "/main"
         }
       ]
     }
@@ -58,7 +58,7 @@ class Sidebar extends React.Component {
           path: "/dashboard",
           name: "Strona główna",
           icon: "tim-icons icon-chart-pie-36",
-          layout: "/admin"
+          layout: "/main"
         },
 
       ]
@@ -67,7 +67,7 @@ class Sidebar extends React.Component {
           path: "/admin-panel",
           name: "Panel administratora",
           icon: "tim-icons icon-badge",
-          layout: "/admin"
+          layout: "/main"
         },);
       }
       this.setState({

@@ -30,7 +30,7 @@ export const movieAdd = movie => {
                  dispatch(movieAddSuccess(response.status));
              })
              .catch(error => {
-                 dispatch(movieAddFailed(error.response.status))
+                 dispatch(movieAddFailed(error.response.data))
              });
     }
 }
@@ -68,7 +68,7 @@ export const movieEdit = movie => {
                  dispatch(moviesGet());
              })
              .catch(error => {
-                 dispatch(movieEditFailed(error.response.status));
+                 dispatch(movieEditFailed(error.response.data));
              });
     }
 }
@@ -102,7 +102,7 @@ export const movieGet = movie => {
                  dispatch(movieGetSuccess(response.data));
              })
              .catch(error => {
-                 dispatch(movieGetFailed(error.response.status));
+                 dispatch(movieGetFailed(error.response.data));
              });
     }
 }
@@ -136,7 +136,7 @@ export const moviesGet = () => {
                  dispatch(moviesGetSuccess(response.data));
              })
              .catch(error => {
-                 dispatch(moviesGetFailed(error.response.status));
+                 dispatch(moviesGetFailed(error.response.data));
              });
     }
 }
@@ -171,7 +171,7 @@ export const movieDelete = movie => {
                  dispatch(moviesGet());
              })
              .catch(error => {
-                 dispatch(movieDeleteFailed(error.response.status));
+                 dispatch(movieDeleteFailed(error.response.data));
              });
     }
 }

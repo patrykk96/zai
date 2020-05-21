@@ -1,6 +1,7 @@
 import React from 'react';
 import Rating from 'react-rating';
 import "./MovieCard.css";
+import { Link }  from 'react-router-dom';
 
 import {
     Card,
@@ -21,40 +22,43 @@ class MovieCard extends React.Component {
     }
 
     render() {
-
         return (
+            
             <Col lg="4">
-                <Card>
-                    <CardHeader>
-                        <h5 className="card-category">Test</h5>
-                        <CardTitle tag="h3">
-                            <i className="tim-icons icon-controller text-info" /> {" "}
-                            {this.props.movieName}
-                        </CardTitle>
-                        <a href="#">
+                <Link to={`movie/${this.props.id}`}>
+                    <Card>
+                        <CardHeader>
+                            <h5 className="card-category">Test</h5>
+                            <CardTitle tag="h3">
+                                <i className="tim-icons icon-tv-2 text-info" /> {" "}
+                                {this.props.movieName}
+                            </CardTitle>
+
                             <CardImg src={this.props.movieImage} className="customCardImg"></CardImg>
-                        </a>
-                    </CardHeader>
-                    <CardBody>
-                        <Label>
-                            {this.props.movieDescription}
-                        </Label>
-                        <br />
-                        <Label>
-                            Średnia ocen:
+                            
+                        </CardHeader>
+                        <CardBody>
+                            <Label>
+                                {this.props.movieDescription}
+                            </Label>
                             <br />
-                            <Rating
-                                placeholderRating={this.props.movieRating}
-                                emptySymbol="tim-icons icon-shape-start rating"
-                                fullSymbol="tim-icons icon-shape-star text-success rating"
-                                placeholderSymbol="tim-icons icons-shape-star text-success rating"
-                                readonly 
-                            />
-                        </Label>
-                        <br />
-                    </CardBody>
-                </Card>
+                            <Label>
+                                Średnia ocen:
+                                <br />
+                                <Rating
+                                    placeholderRating={this.props.movieRating}
+                                    emptySymbol="tim-icons icon-shape-start rating"
+                                    fullSymbol="tim-icons icon-shape-star text-success rating"
+                                    placeholderSymbol="tim-icons icons-shape-star text-success rating"
+                                    readonly 
+                                />
+                            </Label>
+                            <br />
+                        </CardBody>
+                    </Card>
+                </Link>
             </Col>
+            
         );
     }
 }

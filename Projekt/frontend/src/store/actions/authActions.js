@@ -30,7 +30,7 @@ export const register = user => {
                  dispatch(registerSuccess(response.status));
              })
              .catch(error => {
-                 dispatch(registerFailed(error.response.data.error));
+                 dispatch(registerFailed(error.response.data));
              });
     };
 };
