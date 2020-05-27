@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     public class MovieController : Controller
     {
@@ -152,24 +152,5 @@ namespace backend.Controllers
 
             return Ok(result);
         }
-
-        [HttpPost("addReview")]
-        public async Task<IActionResult> AddReview([FromBody]ReviewModel reviewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var result = await _movieService.AddReview(reviewModel);
-
-            if (result.Error != null)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
     }
 }
