@@ -97,6 +97,7 @@ namespace backend.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("getMovie/{id}")]
         public async Task<IActionResult> GetMovie(int id)
         {
@@ -105,7 +106,9 @@ namespace backend.Controllers
                 return BadRequest();
             }
 
-            var result = await _movieService.GetMovie(id);
+            var user = User;
+
+            var result = await _movieService.GetMovie(id, user);
 
             if (result.Error != null)
             {
@@ -123,6 +126,7 @@ namespace backend.Controllers
             {
                 return BadRequest();
             }
+
 
             var result = await _movieService.GetMovies();
 
@@ -143,6 +147,66 @@ namespace backend.Controllers
             }
 
             var result = await _movieService.AddReview(reviewModel);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("addFavouriteMovie/{movieId}")]
+        public async Task<IActionResult> AddFavouriteMovie(int movieId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _movieService.AddFavouriteMovie(user, movieId);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("deleteFavouriteMovie/{movieId}")]
+        public async Task<IActionResult> DeleteFavouriteMovie(int movieId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _movieService.DeleteFavouriteMovie(user, movieId);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("getFavouriteMovies")]
+        public async Task<IActionResult> GetFavouriteMovies()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _movieService.GetFavouriteMovies(user);
 
             if (result.Error != null)
             {

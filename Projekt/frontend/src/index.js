@@ -36,13 +36,15 @@ import "assets/css/nucleo-icons.css";
 
 import authReducer from "store/reducers/authReducer";
 import movieReducer from "store/reducers/movieReducer";
+import movieReviewReducer from "store/reducers/movieReviewReducer";
 
 setApiSettings();
 const hist = createBrowserHistory();
 
 const rootReducer = combineReducers({
   authReducer: authReducer,
-  movieReducer: movieReducer
+  movieReducer: movieReducer,
+  movieReviewReducer: movieReviewReducer
 });
 
 const store = createStore(

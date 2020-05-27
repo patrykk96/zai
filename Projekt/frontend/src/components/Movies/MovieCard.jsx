@@ -44,15 +44,15 @@ class MovieCard extends React.Component {
                             <br />
                             <Label>
                                 Średnia ocen:
-                                <br />
-                                <Rating
-                                    placeholderRating={this.props.movieRating}
-                                    emptySymbol="tim-icons icon-shape-start rating"
-                                    fullSymbol="tim-icons icon-shape-star text-success rating"
-                                    placeholderSymbol="tim-icons icons-shape-star text-success rating"
-                                    readonly 
-                                />
                             </Label>
+                            <br />
+                            <Rating
+                                placeholderRating={5}
+                                emptySymbol="tim-icons icon-shape-star rating" 
+                                fullSymbol="tim-icons icon-shape-star text-success rating" 
+                                placeholderSymbol="tim-icons icon-shape-star text-success rating"
+                                readonly
+                            /> 
                             <br />
                         </CardBody>
                     </Card>

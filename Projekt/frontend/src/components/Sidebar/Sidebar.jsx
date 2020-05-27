@@ -28,57 +28,65 @@ import PerfectScrollbar from "perfect-scrollbar";
 import { Nav, NavLink as ReactstrapNavLink } from "reactstrap";
 
 var ps;
-var jwtDecode = require('jwt-decode');
+var jwtDecode = require("jwt-decode");
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.activeRoute.bind(this);
-    this.state={
+    this.state = {
       routes: [
         {
           path: "/dashboard",
           name: "Strona główna",
           icon: "tim-icons icon-chart-pie-36",
-          layout: "/main"
-        }
-      ]
-    }
+          layout: "/main",
+        },
+      ],
+    };
   }
   // verifies if routeName is the one active (in browser input)
   activeRoute(routeName) {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   }
   componentDidMount() {
-    if(this.props.isAuthenticated) {
+    if (this.props.isAuthenticated) {
       let token = localStorage.getItem("token");
       let decodedToken = jwtDecode(token);
       let role = decodedToken.Role;
-      let routes =  [
+      let routes = [
         {
           path: "/dashboard",
           name: "Strona główna",
           icon: "tim-icons icon-chart-pie-36",
-          layout: "/main"
+          layout: "/main",
         },
-
-      ]
-      if(role === "Admin"){
+      ];
+      if (role === "Admin") {
         routes.push({
           path: "/admin-panel",
           name: "Panel administratora",
           icon: "tim-icons icon-badge",
-          layout: "/main"
-        },);
+          layout: "/main",
+        });
+      }
+
+      if (token) {
+        routes.push({
+          path: "/favouriteMovies",
+          name: "Twoje ulubione filmy",
+          icon: "tim-icons icon-heart-2",
+          layout: "/main",
+        });
       }
       this.setState({
-        routes: routes
-      })
+        routes: routes,
+      });
     }
 
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.refs.sidebar, {
         suppressScrollX: true,
-        suppressScrollY: false
+        suppressScrollY: false,
       });
     }
   }
@@ -87,7 +95,7 @@ class Sidebar extends React.Component {
       ps.destroy();
     }
   }
-  
+
   linkOnClick = () => {
     document.documentElement.classList.remove("nav-open");
   };
@@ -115,7 +123,9 @@ class Sidebar extends React.Component {
                     onClick={this.props.toggleSidebar}
                   >
                     <i className={prop.icon} />
-                    <big><p>{prop.name}</p></big>
+                    <big>
+                      <p>{prop.name}</p>
+                    </big>
                   </NavLink>
                 </li>
               );
@@ -128,7 +138,7 @@ class Sidebar extends React.Component {
 }
 
 Sidebar.defaultProps = {
-  bgColor: "primary"
+  bgColor: "primary",
 };
 
 Sidebar.propTypes = {
@@ -144,8 +154,8 @@ Sidebar.propTypes = {
     // the text of the logo
     text: PropTypes.node,
     // the image src of the logo
-    imgSrc: PropTypes.string
-  })
+    imgSrc: PropTypes.string,
+  }),
 };
 
 export default Sidebar;

@@ -16,9 +16,10 @@
 
 */
 import Dashboard from "views/Dashboard.jsx";
-import AdminPanel from "views/AdminPanel.jsx"
-import MovieDetails from "views/MovieDetails.jsx"
-
+import AdminPanel from "views/AdminPanel.jsx";
+import MovieDetails from "views/MovieDetails.jsx";
+import ReviewAdd from "components/Reviews/ReviewAdd";
+import FavouriteMovies from "views/FavouriteMovies";
 
 var routes = [
   {
@@ -26,22 +27,35 @@ var routes = [
     name: "Strona główna",
     icon: "tim-icons icon-chart-pie-36",
     component: Dashboard,
-    layout: "/main"
+    layout: "/main",
   },
   {
     path: "/admin-panel",
     name: "Panel administratora",
     icon: "tim-icons icon-badge",
     component: AdminPanel,
-    layout: "/main"
+    layout: "/main",
   },
   {
     path: "/movie/:movieId",
     name: "Szczegóły",
     icon: "tim-icons icon-badge",
     component: MovieDetails,
-    layout: "/main"
+    layout: "/main",
   },
-  
+  {
+    path: "/reviewadd/:movieId",
+    name: "Dodaj recenzję",
+    icon: "tim-icons icon-badge",
+    component: ReviewAdd,
+    layout: "/main",
+  },
+  {
+    path: "/favouriteMovies",
+    name: "Twoje ulubione filmy",
+    icon: "tim-icons icon-badge",
+    component: FavouriteMovies,
+    layout: "/main",
+  },
 ];
 export default routes;

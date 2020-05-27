@@ -2,6 +2,7 @@
 using backend.Data.Dto;
 using backend.Data.Enums;
 using backend.Data.Models;
+using backend.Repository;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +38,6 @@ namespace backend.Services
                 Error = null
             };
 
-            // TODO: implement mapper
             var user = new User()
             {
                 Email = userModel.Email,
@@ -82,7 +82,6 @@ namespace backend.Services
                 Error = null
             };
 
-            //TODO: add option to login with email
             var user = await _userManager.FindByNameAsync(loginModel.Username);
 
             if (user == null)
@@ -91,7 +90,6 @@ namespace backend.Services
                 return result;
             }
 
-            //TODO: Implement "remember me" option
             var loginAttempt = await _signInManager.PasswordSignInAsync(user.UserName, loginModel.Password, false, false);
 
             if (loginAttempt.Succeeded)
@@ -109,8 +107,6 @@ namespace backend.Services
                 return result;
             }
 
-            //TODO: check if user activated account
-
             result.Error = "Nie udało się zalogować";
 
             return result;
@@ -122,7 +118,7 @@ namespace backend.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Role, role),
                 new Claim("Role", role)
             };
