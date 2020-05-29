@@ -12,6 +12,7 @@ import {
 
 import * as movieActions from "store/actions/movieActions";
 import FavouriteMovie from "components/Movies/FavouriteMovie";
+import Spinner from "components/Spinner";
 
 class FavouriteMovies extends React.Component {
   constructor(props) {
@@ -28,7 +29,7 @@ class FavouriteMovies extends React.Component {
 
   render() {
     let movies = null;
-    if (this.props.movies) {
+    if (this.props.movies && !this.props.loading) {
       movies = this.props.movies.map((movie) => {
         return (
           <FavouriteMovie
@@ -45,28 +46,32 @@ class FavouriteMovies extends React.Component {
     }
     return (
       <div className="content">
-        <Card className="card-tasks">
-          <CardHeader>
-            <CardTitle tag="h3">
-              <i className="tim-icons icon-controller text-info" /> Twoje
-              ulubione filmy
-            </CardTitle>
-          </CardHeader>
-          <CardBody>
-            <Table>
-              <thead className="text-primary">
-                <tr>
-                  <th>Obraz</th>
-                  <th>Tytuł</th>
-                  <th>Opis</th>
-                  <th className="text-center">Twoja ocena</th>
-                  <th className="text-center">Usuń z ulubionych</th>
-                </tr>
-              </thead>
-              <tbody>{movies}</tbody>
-            </Table>
-          </CardBody>
-        </Card>
+        {this.props.loading ? (
+          <Spinner />
+        ) : (
+          <Card className="card-tasks">
+            <CardHeader>
+              <CardTitle tag="h3">
+                <i className="tim-icons icon-controller text-info" /> Twoje
+                ulubione filmy
+              </CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Table>
+                <thead className="text-primary">
+                  <tr>
+                    <th>Obraz</th>
+                    <th>Tytuł</th>
+                    <th>Opis</th>
+                    <th className="text-center">Twoja ocena</th>
+                    <th className="text-center">Usuń z ulubionych</th>
+                  </tr>
+                </thead>
+                <tbody>{movies}</tbody>
+              </Table>
+            </CardBody>
+          </Card>
+        )}
       </div>
     );
   }
@@ -76,7 +81,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     favouriteMoviesGet: () => dispatch(movieActions.favouriteMoviesGet()),
     favouriteMovieDelete: (movieId) =>
-      dispatch(movieActions.favouriteMovieDelete(movieId)),
+      dispatch(movieActions.favouriteMovieDelete(movieId, true)),
   };
 };
 

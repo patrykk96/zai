@@ -22,11 +22,9 @@ class AdminPanel extends React.Component {
 
   getMovies() {
     this.props.moviesGet();
-    console.log(this.props);
   }
 
   toggleMovieAdd = () => {
-    console.log(this.props);
     this.setState((prevState) => ({
       toggleMovieAdd: !prevState.toggleMovieAdd,
     }));

@@ -151,7 +151,7 @@ const mapDispatchToProps = (dispatch) => {
     favouriteMovieAdd: (movieId) =>
       dispatch(movieActions.favouriteMovieAdd(movieId)),
     favouriteMovieDelete: (movieId) =>
-      dispatch(movieActions.favouriteMovieDelete(movieId)),
+      dispatch(movieActions.favouriteMovieDelete(movieId, false)),
   };
 };
 

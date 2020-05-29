@@ -190,7 +190,8 @@ namespace backend.Services
             //sprawdzenie czy film jest ustawiony jako ulubiony dla zalogowanego u¿ytkownika
             if (user != null)
             {
-                var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+                var userId = userIdentity.Id;
                 isFavourite = await _favouriteMovieRepo.Exists(x => x.MovieId == id && x.UserId == userId);
             }
             //tworze obiekt z filmem i zwracam go
@@ -256,7 +257,9 @@ namespace backend.Services
             try
             {
 
-                var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+
+                var userId = userIdentity.Id;
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -312,7 +315,9 @@ namespace backend.Services
 
             try
             {
-                var userId = _userManager.GetUserId(user);
+                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+
+                var userId = userIdentity.Id;
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -364,7 +369,9 @@ namespace backend.Services
             {
                 var movies = await _repo.GetAll();
 
-                var userId = _userManager.GetUserId(user);
+                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+
+                var userId = userIdentity.Id;
 
                 List<MovieDto> moviesToSend = new List<MovieDto>();
 

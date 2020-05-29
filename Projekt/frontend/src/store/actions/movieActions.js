@@ -114,7 +114,6 @@ export const movieGet = (movie) => {
       .get("/movie/getMovie/" + movie)
       .then((response) => {
         dispatch(movieGetSuccess(response.data));
-        console.log(response.data);
       })
       .catch((error) => {
         dispatch(movieGetFailed(error.response.data));
@@ -221,6 +220,7 @@ export const favouriteMovieAdd = (movieId) => {
       .post("/movie/addFavouriteMovie/" + movieId)
       .then((response) => {
         dispatch(favouriteMovieAddSuccess(response.status));
+        dispatch(movieGet(movieId));
       })
       .catch((error) => {
         dispatch(favouriteMovieAddFailed(error.response.data));
@@ -248,7 +248,7 @@ export const favouriteMovieDeleteFailed = (error) => {
   };
 };
 
-export const favouriteMovieDelete = (movieId) => {
+export const favouriteMovieDelete = (movieId, isFavouriteMoviesView) => {
   return (dispatch) => {
     dispatch(favouriteMovieDeleteStart());
 
@@ -256,6 +256,13 @@ export const favouriteMovieDelete = (movieId) => {
       .delete("/movie/deleteFavouriteMovie/" + movieId)
       .then((response) => {
         dispatch(favouriteMovieDeleteSuccess(response.data));
+
+        //data reload method depends on view
+        if (isFavouriteMoviesView) {
+          dispatch(favouriteMoviesGet(movieId));
+        } else {
+          dispatch(movieGet(movieId));
+        }
       })
       .catch((error) => {
         dispatch(favouriteMovieDeleteFailed(error.response.data));
@@ -265,20 +272,20 @@ export const favouriteMovieDelete = (movieId) => {
 
 export const favouriteMoviesGetStart = () => {
   return {
-    type: types.MOVIES_GET_START,
+    type: types.FAVOURITE_MOVIES_GET_START,
   };
 };
 
 export const favouriteMoviesGetSuccess = (response) => {
   return {
-    type: types.MOVIES_GET_SUCCESS,
+    type: types.FAVOURITE_MOVIES_GET_SUCCESS,
     response: response,
   };
 };
 
 export const favouriteMoviesGetFailed = (error) => {
   return {
-    type: types.MOVIES_GET_FAILED,
+    type: types.FAVOURITE_MOVIES_GET_FAILED,
     error: error,
   };
 };
@@ -286,7 +293,6 @@ export const favouriteMoviesGetFailed = (error) => {
 export const favouriteMoviesGet = () => {
   return (dispatch) => {
     dispatch(favouriteMoviesGetStart());
-
     axios
       .get("/movie/getFavouriteMovies")
       .then((response) => {
