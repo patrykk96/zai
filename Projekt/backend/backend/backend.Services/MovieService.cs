@@ -17,13 +17,11 @@ namespace backend.Services
     public class MovieService : IMovieService
     {
         private readonly IRepository<Movie> _repo;
-        private readonly IRepository<Review> _reviewRepo;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public MovieService(IRepository<Movie> repo, IRepository<Review> reviewRepo, IHostingEnvironment hostingEnvironment)
+        public MovieService(IRepository<Movie> repo, IHostingEnvironment hostingEnvironment)
         {
             _repo = repo;
-            _reviewRepo = reviewRepo;
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -73,7 +71,6 @@ namespace backend.Services
             }
 
             return result;
-
         }
 
         public async Task<ResultDto<BaseDto>> UpdateMovie(int id, MovieModel movieModel)
@@ -230,58 +227,6 @@ namespace backend.Services
             result.SuccessResult = movieList;
 
             return result;
-        }
-
-        //dodaj recenzje
-        public async Task<ResultDto<BaseDto>> AddReview(ReviewModel reviewModel)
-        {
-
-            var result = new ResultDto<BaseDto>()
-            {
-                Error = null
-            };
-
-            //sprawdzam czy film istnieje
-            var movieExists = await _repo.Exists(x => x.Id == reviewModel.MovieId);
-
-            if (!movieExists)
-            {
-                result.Error = "Nie odnaleziono filmu";
-                return result;
-            }
-
-            //sprawdzam czy ten u¿ytkownik ju¿ doda³ recenzje do wybranego filmu
-            var oldReview = await _reviewRepo.GetEntity(x => x.MovieId == reviewModel.MovieId
-                                                        && x.UserId == reviewModel.UserId);
-
-
-            //jeœli recenzja ju¿ jest, zmieniam jej wartoœæ na now¹, w przeciwnym wypadku tworze nowa recenzje
-            if (oldReview != null)
-            {
-                if (oldReview.Score != reviewModel.Score
-                    && oldReview.Content != reviewModel.Content)
-                {
-                    oldReview.Score = reviewModel.Score;
-                    oldReview.Content = reviewModel.Content;
-                    oldReview.Updated = DateTime.Now;
-                    await _reviewRepo.Update(oldReview);
-                }
-            }
-            else
-            {
-                var review = new Review()
-                {
-                    UserId = reviewModel.UserId,
-                    MovieId = reviewModel.MovieId,
-                    Score = reviewModel.Score,
-                    Content = reviewModel.Content,
-                    Created = DateTime.Now
-                };
-                await _reviewRepo.Add(review);
-            }
-                       
-            return result;
-
         }
 
         //metoda zapisujaca obrazek na dysku

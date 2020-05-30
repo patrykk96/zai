@@ -9,38 +9,38 @@ using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-
-
 namespace backend.Controllers
 {
-    [Authorize(Roles = "User, Admin")]
+    [Authorize]
     [Route("api/[controller]")]
-    public class MovieController : Controller
+    public class ReviewController : Controller
     {
-        private readonly IMovieService _movieService;
+        private readonly IReviewService _reviewService;
 
-        public MovieController(IMovieService movieService)
+        public ReviewController(IReviewService reviewService)
         {
-            _movieService = movieService;
+            _reviewService = reviewService;
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost("addMovie/{name}/{description}")]
-        public async Task<IActionResult> AddMovie(string name, string description, [FromForm] ImageModel imageModel)
+
+        [HttpPost("addReview/{content}/{rating}/{movieid}")]
+        public async Task<IActionResult> AddReview(string content, int rating, int movieid)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var movieModel = new MovieModel()
+            var user = User;
+
+            var reviewModel = new ReviewModel()
             {
-                Name = name,
-                Description = description,
-                Logo = imageModel.Image
+                Score = rating,
+                Content = content,
+                MovieId = movieid
             };
 
-            var result = await _movieService.AddMovie(movieModel);
+            var result = await _reviewService.AddReview(reviewModel, user);
 
             if (result.Error != null)
             {
@@ -50,24 +50,24 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPatch("updateMovie/{id}/{name}/{description}")]
-        public async Task<IActionResult> UpdateMovie(int id, string name, string description, ImageModel imageModel)
+        [HttpPatch("updateReview/{content}/{rating}/{movieid}")]
+        public async Task<IActionResult> UpdateReview(string content, int rating, int movieid)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
+            var user = User;
 
-            var movieModel = new MovieModel()
+            var reviewModel = new ReviewModel()
             {
-                Name = name,
-                Description = description,
-                Logo = imageModel.Image
+                Score = rating,
+                Content = content,
+                MovieId = movieid
             };
 
-            var result = await _movieService.UpdateMovie(id, movieModel);
+            var result = await _reviewService.UpdateReview(reviewModel, user);
 
             if (result.Error != null)
             {
@@ -77,17 +77,18 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("deleteMovie/{id}")]
-        public async Task<IActionResult> DeleteMovie(int id)
+
+        [HttpDelete("deleteReview/{id}")]
+        public async Task<IActionResult> DeleteReview(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
+            var user = User;
 
-            var result = await _movieService.DeleteMovie(id);
+            var result = await _reviewService.DeleteReview(id, user);
 
             if (result.Error != null)
             {
@@ -97,15 +98,18 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getMovie/{id}")]
-        public async Task<IActionResult> GetMovie(int id)
+
+        [HttpGet("getReview/{reviewid}")]
+        public async Task<IActionResult> GetReview(int reviewid)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var result = await _movieService.GetMovie(id);
+            var user = User;
+
+            var result = await _reviewService.GetReview(reviewid, user);
 
             if (result.Error != null)
             {
@@ -116,15 +120,17 @@ namespace backend.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("getMovies")]
-        public async Task<IActionResult> GetMovies()
+        [HttpGet("getReviews/{movieid}")]
+        public async Task<IActionResult> GetReviews(int movieid)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var result = await _movieService.GetMovies();
+            var user = User;
+
+            var result = await _reviewService.GetReviews(movieid, user);
 
             if (result.Error != null)
             {
