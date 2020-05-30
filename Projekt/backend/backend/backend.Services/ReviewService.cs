@@ -39,7 +39,8 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+            var userId = userIdentity.Id;
 
             if (userId == null)
             {
@@ -88,18 +89,28 @@ namespace backend.Services
         }
 
         //usuwanie recenzji
-        public async Task<ResultDto<BaseDto>> DeleteReview(int id, ClaimsPrincipal user)
+        public async Task<ResultDto<BaseDto>> DeleteReview(int reviewid, ClaimsPrincipal user)
         {
             var result = new ResultDto<BaseDto>()
             {
                 Error = null
             };
 
-            var review = await _reviewRepo.GetEntity(x => x.Id == id);
+            //sprawdzam czy uzytkownik jest wlascicielem recenzji
+            var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+            var userId = userIdentity.Id;
+
+            var review = await _reviewRepo.GetEntity(x => x.Id == reviewid);
 
             if (review == null)
             {
                 result.Error = "Nie odnaleziono podanej recenzji";
+                return result;
+            }
+
+            if (review.UserId != userId)
+            {
+                result.Error = "Tylko autor może usunąć swoją recenzje";
                 return result;
             }
 
@@ -202,7 +213,8 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+            var userId = userIdentity.Id;
 
             if (userId == null)
             {
@@ -219,17 +231,8 @@ namespace backend.Services
                 return result;
             }
 
-            //sprawdzam czy uzytkownik dodal recenzje do danego filmu
-            exists = await _reviewRepo.Exists(x => x.UserId == userId && x.MovieId == reviewModel.MovieId);
-
-            if (!exists)
-            {
-                result.Error = "Błąd- nie znaleziono recenzji użytkownika";
-                return result;
-            }
-
             //sprawdzam czy recenzja danego filmu istnieje
-            var review = await _reviewRepo.GetEntity(x => x.UserId == userId);
+            var review = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == reviewModel.MovieId);
 
             if (review == null)
             {
@@ -243,11 +246,8 @@ namespace backend.Services
             {
                 review.Content = reviewModel.Content;
             }
-            if (reviewModel.Score != 0)
-            {
-                review.Score = reviewModel.Score;
-            }
-
+            
+            review.Score = reviewModel.Score;
             review.Updated = DateTime.Now;
 
             try

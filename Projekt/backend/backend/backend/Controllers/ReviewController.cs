@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User, Admin")]
     [Route("api/[controller]")]
     public class ReviewController : Controller
     {
@@ -21,7 +21,6 @@ namespace backend.Controllers
         {
             _reviewService = reviewService;
         }
-
 
         [HttpPost("addReview/{content}/{rating}/{movieid}")]
         public async Task<IActionResult> AddReview(string content, int rating, int movieid)
@@ -78,8 +77,8 @@ namespace backend.Controllers
         }
 
 
-        [HttpDelete("deleteReview/{id}")]
-        public async Task<IActionResult> DeleteReview(int id)
+        [HttpDelete("deleteReview/{reviewid}")]
+        public async Task<IActionResult> DeleteReview(int reviewid)
         {
             if (!ModelState.IsValid)
             {
@@ -88,7 +87,7 @@ namespace backend.Controllers
 
             var user = User;
 
-            var result = await _reviewService.DeleteReview(id, user);
+            var result = await _reviewService.DeleteReview(reviewid, user);
 
             if (result.Error != null)
             {
