@@ -87,6 +87,7 @@ namespace backend
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IMovieService, MovieService>();
+            services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddSwaggerGen(c =>
             {
