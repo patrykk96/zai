@@ -1,5 +1,6 @@
 import React from "react";
 import Rating from "react-rating";
+import { Link } from "react-router-dom";
 
 import { Button } from "reactstrap";
 
@@ -18,7 +19,7 @@ class FavouriteMovie extends React.Component {
           {" "}
           {this.props.movieName}
         </td>
-        <td width="35%">
+        <td width="30%">
           <small>{this.props.movieDescription}</small>
         </td>
         <td width="10%" className="text-center">
@@ -30,7 +31,12 @@ class FavouriteMovie extends React.Component {
             readonly
           />
         </td>
-        <td width="15%" className="text-center">
+        <td width="10%" className="text-center">
+          <Link to={`movie/${this.props.id}`}>
+            <i className="tim-icons icon-user-run" />
+          </Link>
+        </td>
+        <td width="10%" className="text-center">
           <Button
             onClick={() => this.props.submitFavouriteMovieDelete(this.props.id)}
             color="link"

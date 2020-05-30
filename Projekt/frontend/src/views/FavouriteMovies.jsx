@@ -64,6 +64,7 @@ class FavouriteMovies extends React.Component {
                     <th>Tytuł</th>
                     <th>Opis</th>
                     <th className="text-center">Twoja ocena</th>
+                    <th className="text-center">Przejdź do filmu</th>
                     <th className="text-center">Usuń z ulubionych</th>
                   </tr>
                 </thead>
