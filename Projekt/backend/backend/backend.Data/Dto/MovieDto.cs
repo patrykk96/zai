@@ -10,6 +10,7 @@ namespace backend.Data.Dto
         public string Name { get; set; }
         public string Description { get; set; }
         public string Logo { get; set; }
-        //public double Rating { get; set; }
+        public int UserRating { get; set; }
+        public double UsersAverage { get; set; }
     }
 }
