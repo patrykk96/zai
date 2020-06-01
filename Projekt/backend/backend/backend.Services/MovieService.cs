@@ -170,7 +170,7 @@ namespace backend.Services
         }
 
         //pobranie pojedynczego filmu
-        public async Task<ResultDto<MovieDto>> GetMovie(int movieid, ClaimsPrincipal user)
+        public async Task<ResultDto<MovieDto>> GetMovie(int movieId, ClaimsPrincipal user)
         {
             var result = new ResultDto<MovieDto>()
             {
@@ -178,7 +178,7 @@ namespace backend.Services
             };
 
             //probuje uzyskac wskazany film
-            var movie = await _repo.GetEntity(x => x.Id == movieid);
+            var movie = await _repo.GetEntity(x => x.Id == movieId);
 
             if (movie == null)
             {
@@ -200,7 +200,7 @@ namespace backend.Services
 
 
             //probuje uzyskac recenzje aktualnego usera
-            var userReview = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == movieid);
+            var userReview = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == movieId);
 
             if (userReview == null)
             {
@@ -213,7 +213,7 @@ namespace backend.Services
 
 
             //pobieram recenzje do obliczenia sredniej oceny filmu
-            var reviews = await _reviewRepo.GetBy(x => x.MovieId == movieid);
+            var reviews = await _reviewRepo.GetBy(x => x.MovieId == movieId);
 
             //zmienne do liczenia sredniej
             double reviewScoreSum = 0;
@@ -230,9 +230,7 @@ namespace backend.Services
             //sprawdzenie czy film jest ustawiony jako ulubiony dla zalogowanego u¿ytkownika
             if (user != null)
             {
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-                var userId = userIdentity.Id;
-                isFavourite = await _favouriteMovieRepo.Exists(x => x.MovieId == id && x.UserId == userId);
+                isFavourite = await _favouriteMovieRepo.Exists(x => x.MovieId == movieId && x.UserId == userId);
             }
             //tworze obiekt z filmem i zwracam go
             var movieToSend = new MovieDto()
@@ -252,7 +250,7 @@ namespace backend.Services
         }
 
         //zwrócenie listy filmow
-        public async Task<ResultDto<ListMovieDto>> GetMovies()
+        public async Task<ResultDto<ListMovieDto>> GetMovies(ClaimsPrincipal user)
         {
             var result = new ResultDto<ListMovieDto>()
             {

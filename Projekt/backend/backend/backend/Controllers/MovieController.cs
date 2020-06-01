@@ -127,7 +127,9 @@ namespace backend.Controllers
                 return BadRequest();
             }
 
-            var result = await _movieService.GetMovies();
+            var user = User;
+
+            var result = await _movieService.GetMovies(user);
 
             if (result.Error != null)
             {
