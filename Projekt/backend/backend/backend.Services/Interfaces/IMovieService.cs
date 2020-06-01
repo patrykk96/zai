@@ -13,8 +13,8 @@ namespace backend.Services.Interfaces
         Task<ResultDto<BaseDto>> AddMovie(MovieModel movieModel);
         Task<ResultDto<BaseDto>> UpdateMovie(int id, MovieModel movieModel);
         Task<ResultDto<BaseDto>> DeleteMovie(int id);
-        Task<ResultDto<MovieDto>> GetMovie(int id, ClaimsPrincipal user);
-        Task<ResultDto<ListMovieDto>> GetMovies();
+        Task<ResultDto<MovieDto>> GetMovie(int movieid, ClaimsPrincipal user);
+        Task<ResultDto<ListMovieDto>> GetMovies(ClaimsPrincipal user);
         Task<ResultDto<BaseDto>> AddFavouriteMovie(ClaimsPrincipal user, int movieId);
         Task<ResultDto<BaseDto>> DeleteFavouriteMovie(ClaimsPrincipal user, int movieId);
         Task<ResultDto<ListMovieDto>> GetFavouriteMovies(ClaimsPrincipal user);

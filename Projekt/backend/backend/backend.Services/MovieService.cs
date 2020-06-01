@@ -19,13 +19,16 @@ namespace backend.Services
     public class MovieService : IMovieService
     {
         private readonly IRepository<Movie> _repo;
+        private readonly IRepository<Review> _reviewRepo;
+        private readonly UserManager<User> _userManager;
         private readonly IRepository<FavouriteMovie> _favouriteMovieRepo;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly UserManager<User> _userManager;
 
-        public MovieService(IRepository<Movie> repo, IHostingEnvironment hostingEnvironment, IRepository<FavouriteMovie> favouriteMovieRepo, UserManager<User> userManager)
+        public MovieService(IRepository<Movie> repo, IRepository<Review> reviewRepo, UserManager<User> userManager, IHostingEnvironment hostingEnvironment, IRepository<FavouriteMovie> favouriteMovieRepo)
         {
             _repo = repo;
+            _reviewRepo = reviewRepo;
+            _userManager = userManager;
             _hostingEnvironment = hostingEnvironment;
             _favouriteMovieRepo = favouriteMovieRepo;
             _userManager = userManager;
@@ -167,7 +170,7 @@ namespace backend.Services
         }
 
         //pobranie pojedynczego filmu
-        public async Task<ResultDto<MovieDto>> GetMovie(int id, ClaimsPrincipal user)
+        public async Task<ResultDto<MovieDto>> GetMovie(int movieid, ClaimsPrincipal user)
         {
             var result = new ResultDto<MovieDto>()
             {
@@ -175,12 +178,52 @@ namespace backend.Services
             };
 
             //probuje uzyskac wskazany film
-            var movie = await _repo.GetEntity(x => x.Id == id);
+            var movie = await _repo.GetEntity(x => x.Id == movieid);
 
             if (movie == null)
             {
                 result.Error = "Nie odnaleziono filmu";
                 return result;
+            }
+
+            string userId;
+            // sprawdzam czy uzytkownik istnieje
+            if (user.Identity.Name != null) {
+                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+                userId = userIdentity.Id;
+            }
+            else
+            {
+                userId = null;
+            }
+            int userRating; // zmienna dla oceny filmu aktualnego usera
+
+
+            //probuje uzyskac recenzje aktualnego usera
+            var userReview = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == movieid);
+
+            if (userReview == null)
+            {
+                userRating = 0;
+            }
+            else
+            {
+                userRating = userReview.Score;
+            }
+
+
+            //pobieram recenzje do obliczenia sredniej oceny filmu
+            var reviews = await _reviewRepo.GetBy(x => x.MovieId == movieid);
+
+            //zmienne do liczenia sredniej
+            double reviewScoreSum = 0;
+            double numberOfReviews = 0;
+
+            //licze srednia ocene filmu z poszczegolnych recenzji
+            foreach (var review in reviews)
+            {
+                reviewScoreSum += review.Score;
+                numberOfReviews++;
             }
 
             bool isFavourite = false; 
@@ -198,8 +241,9 @@ namespace backend.Services
                 Description = movie.Description,
                 Name = movie.Name,
                 Logo = movie.Logo,
+                UserRating = userRating,
+                UsersAverage = reviewScoreSum/numberOfReviews,
                 IsFavourite = isFavourite
-                //Rating = movie.Rating,
             };
 
             result.SuccessResult = movieToSend;
@@ -215,6 +259,19 @@ namespace backend.Services
                 Error = null
             };
 
+
+            string userId;
+            // sprawdzam czy uzytkownik istnieje
+            if (user.Identity.Name != null)
+            {
+                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
+                userId = userIdentity.Id;
+            }
+            else
+            {
+                userId = null;
+            }
+
             var movies = await _repo.GetAll();
 
             List<MovieDto> moviesToSend = new List<MovieDto>();
@@ -222,6 +279,26 @@ namespace backend.Services
             //tworze liste filmow do zwrocenia
             foreach (var movie in movies)
             {
+                int userRating = 0; // zmienna dla oceny filmu aktualnego usera
+
+                //pobieram recenzje do obliczenia sredniej oceny filmu
+                var reviews = await _reviewRepo.GetBy(x => x.MovieId == movie.Id);
+
+                //zmienne do liczenia sredniej
+                double reviewScoreSum = 0;
+                double numberOfReviews = 0;
+
+                //licze srednia ocene filmu z poszczegolnych recenzji
+                foreach (var review in reviews)
+                {
+                    if (review.UserId == userId)
+                    {
+                        userRating = review.Score;
+                    }
+
+                    reviewScoreSum +=review.Score;
+                    numberOfReviews++;
+                }
 
                 var m = new MovieDto()
                 {
@@ -229,6 +306,8 @@ namespace backend.Services
                     Description = movie.Description,
                     Logo = movie.Logo,
                     Name = movie.Name,
+                    UserRating = userRating,
+                    UsersAverage = reviewScoreSum/numberOfReviews,
                 };
 
                 moviesToSend.Add(m);

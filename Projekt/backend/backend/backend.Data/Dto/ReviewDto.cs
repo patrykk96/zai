@@ -11,5 +11,6 @@ namespace backend.Data.Dto
         public int Rating { get; set; }
         public string Author { get; set; }
         public int MovieId { get; set; }
+        public string MovieName { get; set; }
     }
 }

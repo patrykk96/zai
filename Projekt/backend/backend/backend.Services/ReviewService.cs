@@ -147,6 +147,15 @@ namespace backend.Services
             var reviewOwner = await _userManager.FindByIdAsync(review.UserId);
             var reviewOwnerName = reviewOwner.UserName;
 
+            //pobieram nazwe filmu
+            var movie = await _repo.GetEntity(x => x.Id == review.MovieId);
+
+            if (movie == null)
+            {
+                result.Error = "Nie odnaleziono filmu";
+                return result;
+            }
+
             //tworze obiekt z recenzja i zwracam go
             var reviewToSend = new ReviewDto()
             {
@@ -155,6 +164,7 @@ namespace backend.Services
                 Rating = review.Score,
                 Author = reviewOwnerName,
                 MovieId = review.MovieId,
+                MovieName = movie.Name
             };
 
             result.SuccessResult = reviewToSend;
@@ -172,6 +182,15 @@ namespace backend.Services
 
             var reviews = await _reviewRepo.GetBy(x => x.MovieId == movieid);
 
+            //pobieram nazwe filmu
+            var movie = await _repo.GetEntity(x => x.Id == movieid);
+
+            if (movie == null)
+            {
+                result.Error = "Nie odnaleziono filmu";
+                return result;
+            }
+
             List<ReviewDto> reviewsToSend = new List<ReviewDto>();
 
             //tworze liste recenzji do zwrocenia
@@ -187,7 +206,8 @@ namespace backend.Services
                     Content = review.Content,
                     Rating = review.Score,
                     Author = reviewOwnerName,
-                    MovieId = review.MovieId
+                    MovieId = review.MovieId,
+                    MovieName = movie.Name
                 };
 
                 reviewsToSend.Add(m);
@@ -204,7 +224,7 @@ namespace backend.Services
 
         }
 
-        public async Task<ResultDto<BaseDto>> UpdateReview(ReviewModel reviewModel, ClaimsPrincipal user)
+        public async Task<ResultDto<BaseDto>> UpdateReview(int reviewid, ReviewModel reviewModel, ClaimsPrincipal user)
         {
 
             var result = new ResultDto<BaseDto>()
@@ -232,7 +252,7 @@ namespace backend.Services
             }
 
             //sprawdzam czy recenzja danego filmu istnieje
-            var review = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == reviewModel.MovieId);
+            var review = await _reviewRepo.GetEntity(x => x.Id == reviewid);
 
             if (review == null)
             {

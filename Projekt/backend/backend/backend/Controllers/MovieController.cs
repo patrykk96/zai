@@ -98,8 +98,8 @@ namespace backend.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("getMovie/{id}")]
-        public async Task<IActionResult> GetMovie(int id)
+        [HttpGet("getMovie/{movieid}")]
+        public async Task<IActionResult> GetMovie(int movieid)
         {
             if (!ModelState.IsValid)
             {
@@ -108,7 +108,7 @@ namespace backend.Controllers
 
             var user = User;
 
-            var result = await _movieService.GetMovie(id, user);
+            var result = await _movieService.GetMovie(movieid, user);
 
             if (result.Error != null)
             {
@@ -126,7 +126,6 @@ namespace backend.Controllers
             {
                 return BadRequest();
             }
-
 
             var result = await _movieService.GetMovies();
 
