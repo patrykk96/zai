@@ -22,8 +22,8 @@ namespace backend.Controllers
             _reviewService = reviewService;
         }
 
-        [HttpPost("addReview/{content}/{rating}/{movieid}")]
-        public async Task<IActionResult> AddReview(string content, int rating, int movieid)
+        [HttpPost("addReview")]
+        public async Task<IActionResult> AddReview(ReviewModel reviewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -31,13 +31,6 @@ namespace backend.Controllers
             }
 
             var user = User;
-
-            var reviewModel = new ReviewModel()
-            {
-                Score = rating,
-                Content = content,
-                MovieId = movieid
-            };
 
             var result = await _reviewService.AddReview(reviewModel, user);
 
@@ -49,8 +42,8 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("updateReview/{content}/{rating}/{movieid}")]
-        public async Task<IActionResult> UpdateReview(string content, int rating, int movieid)
+        [HttpPatch("updateReview/{reviewid}")]
+        public async Task<IActionResult> UpdateReview(int reviewid, ReviewModel reviewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -59,14 +52,7 @@ namespace backend.Controllers
 
             var user = User;
 
-            var reviewModel = new ReviewModel()
-            {
-                Score = rating,
-                Content = content,
-                MovieId = movieid
-            };
-
-            var result = await _reviewService.UpdateReview(reviewModel, user);
+            var result = await _reviewService.UpdateReview(reviewid, reviewModel, user);
 
             if (result.Error != null)
             {
@@ -97,7 +83,7 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-
+        [AllowAnonymous]
         [HttpGet("getReview/{reviewid}")]
         public async Task<IActionResult> GetReview(int reviewid)
         {
