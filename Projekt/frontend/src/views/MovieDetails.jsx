@@ -1,6 +1,7 @@
 import React from "react";
 import Rating from "react-rating";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import Spinner from "components/Spinner";
 import * as movieActions from "../store/actions/movieActions";
@@ -56,9 +57,11 @@ class MovieDetails extends React.Component {
                 {this.props.isAuthenticated ? (
                   <>
                     {!this.props.movie.rating ? (
-                      <Button className="float-right" color="success">
-                        Utwórz recenzję
-                      </Button>
+                      <Link to={`../reviewAdd/${this.props.movie.id}`}>
+                        <Button className="float-right" color="success">
+                          Utwórz recenzję
+                        </Button>
+                      </Link>
                     ) : (
                       <Button className="float-right" color="success">
                         Wyświetl swoją recenzję

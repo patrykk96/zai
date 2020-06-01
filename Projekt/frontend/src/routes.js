@@ -19,7 +19,9 @@ import Dashboard from "views/Dashboard.jsx";
 import AdminPanel from "views/AdminPanel.jsx";
 import MovieDetails from "views/MovieDetails.jsx";
 import ReviewAdd from "components/Reviews/ReviewAdd";
+import ReviewUpdate from "components/Reviews/ReviewUpdate";
 import FavouriteMovies from "views/FavouriteMovies";
+import ReviewDetails from "views/ReviewDetails";
 
 var routes = [
   {
@@ -44,10 +46,17 @@ var routes = [
     layout: "/main",
   },
   {
-    path: "/reviewadd/:movieId",
+    path: "/reviewAdd/:movieId",
     name: "Dodaj recenzję",
     icon: "tim-icons icon-badge",
     component: ReviewAdd,
+    layout: "/main",
+  },
+  {
+    path: "/reviewUpdate/:movieId",
+    name: "Zaktualizuj recenzję",
+    icon: "tim-icons icon-badge",
+    component: ReviewUpdate,
     layout: "/main",
   },
   {
@@ -55,6 +64,13 @@ var routes = [
     name: "Twoje ulubione filmy",
     icon: "tim-icons icon-badge",
     component: FavouriteMovies,
+    layout: "/main",
+  },
+  {
+    path: "/review/:reviewId",
+    name: "Szczegóły",
+    icon: "tim-icons icon-badge",
+    component: ReviewDetails,
     layout: "/main",
   },
 ];

@@ -99,7 +99,8 @@ namespace backend.Services
                 var token = GenerateJwtToken(user, role);
                 var tokenDto = new LoginDto()
                 {
-                    Token = token
+                    Token = token,
+                    Username = user.UserName
                 };
 
                 result.SuccessResult = tokenDto;

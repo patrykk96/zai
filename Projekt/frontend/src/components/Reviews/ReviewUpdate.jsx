@@ -21,7 +21,7 @@ import * as movieActions from "../../store/actions/movieActions";
 import * as movieReviewActions from "../../store/actions/movieReviewActions";
 import Spinner from "../Spinner";
 
-class ReviewAdd extends React.Component {
+class ReviewUpdate extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,6 +38,7 @@ class ReviewAdd extends React.Component {
     } = this.props;
     this.setState({ movieId: params.movieId });
     this.props.movieGet(params.movieId);
+    this.props.movieReviewGet(params.movieId);
   }
   submitReview = (event) => {
     if (this.state.rating !== 0) {
@@ -53,8 +54,9 @@ class ReviewAdd extends React.Component {
       score: this.state.rating,
     };
 
+    const reviewId = this.props.review.id;
     event.preventDefault();
-    this.props.movieReviewAdd(review);
+    this.props.movieReviewEdit(reviewId, review);
   };
 
   setRating = (value) => {
@@ -71,7 +73,7 @@ class ReviewAdd extends React.Component {
     return (
       <>
         <div className="content">
-          {this.props.loading || !this.props.movie ? (
+          {this.props.loading || !this.props.review ? (
             <Spinner />
           ) : (
             <Row>
@@ -80,7 +82,7 @@ class ReviewAdd extends React.Component {
                   <CardHeader>
                     <CardTitle tag="h3">
                       <i className="tim-icons icon-controller text-success" />{" "}
-                      Dodaj recenzję
+                      Zaktualizuj recenzję
                       <Link to={`../movie/${this.props.movie.id}`}>
                         <Button
                           className="float-right"
@@ -106,6 +108,7 @@ class ReviewAdd extends React.Component {
                           placeholder="Treść recenzji"
                           name="reviewContent"
                           type="textarea"
+                          value={this.props.review.content}
                           maxLength="1000"
                           required
                           onChange={(event) => this.handleInputChange(event)}
@@ -123,7 +126,7 @@ class ReviewAdd extends React.Component {
                         />
                       </FormGroup>
 
-                      <Button color="primary">Dodaj recenzję</Button>
+                      <Button color="primary">Zaktualizuj recenzję</Button>
                       {this.state.invalidRating ? (
                         <UncontrolledAlert color="danger">
                           <span>Nie podano oceny</span>
@@ -147,8 +150,10 @@ class ReviewAdd extends React.Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     movieGet: (movieId) => dispatch(movieActions.movieGet(movieId)),
-    movieReviewAdd: (review) =>
-      dispatch(movieReviewActions.movieReviewAdd(review)),
+    movieReviewEdit: (reviewId, review) =>
+      dispatch(movieReviewActions.movieReviewEdit(reviewId, review)),
+    movieReviewGet: (movieId) =>
+      dispatch(movieReviewActions.movieReviewGet(movieId)),
   };
 };
 
@@ -157,7 +162,8 @@ const mapStateToProps = (state) => {
     loading: state.movieReviewReducer.loading,
     error: state.movieReducer.error,
     movie: state.movieReducer.movie,
+    review: state.movieReviewReducer.review,
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewAdd);
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewUpdate);
