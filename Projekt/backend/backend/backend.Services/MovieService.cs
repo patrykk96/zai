@@ -231,7 +231,7 @@ namespace backend.Services
                 Name = movie.Name,
                 Logo = movie.Logo,
                 UserRating = userRating,
-                UsersAverage = reviewScoreSum/numberOfReviews,
+                UsersAverage = numberOfReviews != 0 ? reviewScoreSum / numberOfReviews : 0,
             };
 
             result.SuccessResult = movieToSend;
@@ -240,7 +240,7 @@ namespace backend.Services
         }
 
         //zwrócenie listy filmow
-        public async Task<ResultDto<ListMovieDto>> GetMovies()
+        public async Task<ResultDto<ListMovieDto>> GetMovies(ClaimsPrincipal user)
         {
             var result = new ResultDto<ListMovieDto>()
             {
@@ -295,7 +295,7 @@ namespace backend.Services
                     Logo = movie.Logo,
                     Name = movie.Name,
                     UserRating = userRating,
-                    UsersAverage = reviewScoreSum/numberOfReviews,
+                    UsersAverage = numberOfReviews != 0 ? reviewScoreSum / numberOfReviews : 0,
                 };
 
                 moviesToSend.Add(m);
