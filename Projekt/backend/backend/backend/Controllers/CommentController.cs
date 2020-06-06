@@ -9,98 +9,24 @@ using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-
-
 namespace backend.Controllers
 {
-    [Authorize(Roles = "User, Admin")]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class MovieController : Controller
+    public class CommentController : Controller
     {
-        private readonly IMovieService _movieService;
 
-        public MovieController(IMovieService movieService)
+        private readonly ICommentService _commentService;
+
+        public CommentController(ICommentService commentService)
         {
-            _movieService = movieService;
+            _commentService = commentService;
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost("addMovie/{name}/{description}")]
-        public async Task<IActionResult> AddMovie(string name, string description, [FromForm] ImageModel imageModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
 
-            var movieModel = new MovieModel()
-            {
-                Name = name,
-                Description = description,
-                Logo = imageModel.Image
-            };
-
-            var result = await _movieService.AddMovie(movieModel);
-
-            if (result.Error != null)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPatch("updateMovie/{id}/{name}/{description}")]
-        public async Task<IActionResult> UpdateMovie(int id, string name, string description, ImageModel imageModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-
-            var movieModel = new MovieModel()
-            {
-                Name = name,
-                Description = description,
-                Logo = imageModel.Image
-            };
-
-            var result = await _movieService.UpdateMovie(id, movieModel);
-
-            if (result.Error != null)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpDelete("deleteMovie/{id}")]
-        public async Task<IActionResult> DeleteMovie(int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-
-            var result = await _movieService.DeleteMovie(id);
-
-            if (result.Error != null)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("getMovie/{movieid}")]
-        public async Task<IActionResult> GetMovie(int movieid)
+        [HttpPost("addComment")]
+        public async Task<IActionResult> AddComment(CommentModel commentModel)
         {
             if (!ModelState.IsValid)
             {
@@ -109,7 +35,7 @@ namespace backend.Controllers
 
             var user = User;
 
-            var result = await _movieService.GetMovie(movieid, user);
+            var result = await _commentService.AddComment(commentModel, user);
 
             if (result.Error != null)
             {
@@ -119,9 +45,9 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [AllowAnonymous]
-        [HttpGet("getMovies")]
-        public async Task<IActionResult> GetMovies()
+
+        [HttpDelete("deleteComment/{commentid}")]
+        public async Task<IActionResult> DeleteComment(int commentid)
         {
             if (!ModelState.IsValid)
             {
@@ -130,7 +56,72 @@ namespace backend.Controllers
 
             var user = User;
 
-            var result = await _movieService.GetMovies(user);
+            var result = await _commentService.DeleteComment(commentid, user);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+
+        [HttpPatch("updateComment/{commentid}")]
+        public async Task<IActionResult> UpdateComment(int commentid, CommentModel commentModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _commentService.UpdateComment(commentid, commentModel, user);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("getComment/{commentid}")]
+        public async Task<IActionResult> GetComment(int commentid)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _commentService.GetComment(commentid, user);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("getComments/{reviewid}")]
+        public async Task<IActionResult> GetComments(int reviewid)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _commentService.GetComments(reviewid, user);
 
             if (result.Error != null)
             {

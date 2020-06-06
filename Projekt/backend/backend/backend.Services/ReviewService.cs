@@ -260,15 +260,21 @@ namespace backend.Services
                 return result;
             }
 
-            //zmiana recenzji
-
-            if (reviewModel.Content != "null")
+            //zmiana recenzji pod warunkiem, ze autor ja zmienia
+            if (review.UserId == userId)
             {
-                review.Content = reviewModel.Content;
+                if (reviewModel.Content != "null")
+                {
+                    review.Content = reviewModel.Content;
+                }
+
+                review.Score = reviewModel.Score;
+                review.Updated = DateTime.Now;
             }
-            
-            review.Score = reviewModel.Score;
-            review.Updated = DateTime.Now;
+            else {
+                result.Error = "Uzytkownik nie jest wlascicielem recenzji";
+                return result;
+            }
 
             try
             {

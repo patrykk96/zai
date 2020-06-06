@@ -88,7 +88,9 @@ namespace backend
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IMovieService, MovieService>();
             services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<ICommentService, CommentService>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = _appName, Version = "v1" });
