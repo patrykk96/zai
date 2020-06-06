@@ -38,7 +38,7 @@ class FavouriteMovies extends React.Component {
             movieName={movie.name}
             movieDescription={movie.description}
             movieImage={movie.logo}
-            userRating={movie.rating}
+            userRating={movie.userRating}
             submitFavouriteMovieDelete={this.submitFavouriteMovieDelete}
           />
         );

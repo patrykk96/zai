@@ -81,7 +81,7 @@ class MoviePanel extends React.Component {
             movieName={movie.name}
             movieDescription={movie.description}
             movieImage={movie.logo}
-            movieRating={movie.rating}
+            movieRating={movie.usersAverage}
             enableEdit={this.enableEdit}
             enabledEdit={this.state.enabledEdit}
             submitMovieDelete={this.submitMovieDelete}

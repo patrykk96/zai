@@ -91,18 +91,52 @@ export const movieReviewGetFailed = (error) => {
   };
 };
 
-export const movieReviewGet = (movieId) => {
-  console.log("test");
+export const movieReviewGet = (reviewId) => {
   return (dispatch) => {
     dispatch(movieReviewGetStart());
 
     axios
-      .get("/review/getReview/" + movieId)
+      .get("/review/getReview/" + reviewId)
       .then((response) => {
         dispatch(movieReviewGetSuccess(response.data));
       })
       .catch((error) => {
         dispatch(movieReviewGetFailed(error.response.data));
+      });
+  };
+};
+
+export const movieUserReviewGetStart = () => {
+  return {
+    type: types.MOVIE_USER_REVIEW_GET_START,
+  };
+};
+
+export const movieUserReviewGetSuccess = (response) => {
+  return {
+    type: types.MOVIE_USER_REVIEW_GET_SUCCESS,
+    response: response,
+  };
+};
+
+export const movieUserReviewGetFailed = (error) => {
+  return {
+    type: types.MOVIE_USER_REVIEW_GET_FAILED,
+    error: error,
+  };
+};
+
+export const movieUserReviewGet = (movieId) => {
+  return (dispatch) => {
+    dispatch(movieUserReviewGetStart());
+
+    axios
+      .get("/review/getUserReview/" + movieId)
+      .then((response) => {
+        dispatch(movieUserReviewGetSuccess(response.data));
+      })
+      .catch((error) => {
+        dispatch(movieUserReviewGetFailed(error.response.data));
       });
   };
 };

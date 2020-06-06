@@ -67,7 +67,7 @@ var routes = [
     layout: "/main",
   },
   {
-    path: "/review/:reviewId",
+    path: "/review/:movieId",
     name: "Szczegóły",
     icon: "tim-icons icon-badge",
     component: ReviewDetails,

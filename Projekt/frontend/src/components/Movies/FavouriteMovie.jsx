@@ -19,10 +19,10 @@ class FavouriteMovie extends React.Component {
           {" "}
           {this.props.movieName}
         </td>
-        <td width="30%">
+        <td width="25%">
           <small>{this.props.movieDescription}</small>
         </td>
-        <td width="10%" className="text-center">
+        <td width="15%" className="text-center">
           <Rating
             placeholderRating={this.props.userRating}
             emptySymbol="tim-icons icon-shape-star rating"

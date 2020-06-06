@@ -3,6 +3,7 @@ using backend.Data.Dto;
 using backend.Data.Enums;
 using backend.Data.Models;
 using backend.Repository;
+using backend.Services.Helpers;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -186,16 +187,8 @@ namespace backend.Services
                 return result;
             }
 
-            string userId;
-            // sprawdzam czy uzytkownik istnieje
-            if (user.Identity.Name != null) {
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-                userId = userIdentity.Id;
-            }
-            else
-            {
-                userId = null;
-            }
+            string userId = await UserHelper.GetId(user, _userManager);
+
             int userRating; // zmienna dla oceny filmu aktualnego usera
 
 
@@ -240,7 +233,7 @@ namespace backend.Services
                 Name = movie.Name,
                 Logo = movie.Logo,
                 UserRating = userRating,
-                UsersAverage = reviewScoreSum/numberOfReviews,
+                UsersAverage = numberOfReviews != 0 ? reviewScoreSum / numberOfReviews : 0,
                 IsFavourite = isFavourite
             };
 
@@ -258,17 +251,7 @@ namespace backend.Services
             };
 
 
-            string userId;
-            // sprawdzam czy uzytkownik istnieje
-            if (user.Identity.Name != null)
-            {
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-                userId = userIdentity.Id;
-            }
-            else
-            {
-                userId = null;
-            }
+            string userId = await UserHelper.GetId(user, _userManager);
 
             var movies = await _repo.GetAll();
 
@@ -305,7 +288,7 @@ namespace backend.Services
                     Logo = movie.Logo,
                     Name = movie.Name,
                     UserRating = userRating,
-                    UsersAverage = reviewScoreSum/numberOfReviews,
+                    UsersAverage = numberOfReviews != 0 ? reviewScoreSum/numberOfReviews : 0
                 };
 
                 moviesToSend.Add(m);
@@ -331,9 +314,7 @@ namespace backend.Services
             try
             {
 
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-
-                var userId = userIdentity.Id;
+                string userId = await UserHelper.GetId(user, _userManager);
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -389,9 +370,7 @@ namespace backend.Services
 
             try
             {
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-
-                var userId = userIdentity.Id;
+                string userId = await UserHelper.GetId(user, _userManager);
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -443,9 +422,7 @@ namespace backend.Services
             {
                 var movies = await _repo.GetAll();
 
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-
-                var userId = userIdentity.Id;
+                string userId = await UserHelper.GetId(user, _userManager);
 
                 List<MovieDto> moviesToSend = new List<MovieDto>();
 
@@ -455,12 +432,28 @@ namespace backend.Services
 
                     if (isFavourite)
                     {
+                        int userRating; // zmienna dla oceny filmu aktualnego usera
+
+
+                        //probuje uzyskac recenzje aktualnego usera
+                        var userReview = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == movie.Id);
+
+                        if (userReview == null)
+                        {
+                            userRating = 0;
+                        }
+                        else
+                        {
+                            userRating = userReview.Score;
+                        }
+
                         var m = new MovieDto()
                         {
                             Id = movie.Id,
                             Description = movie.Description,
                             Logo = movie.Logo,
                             Name = movie.Name,
+                            UserRating = userRating
                         };
 
                         moviesToSend.Add(m);

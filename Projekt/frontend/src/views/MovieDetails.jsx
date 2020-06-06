@@ -56,16 +56,18 @@ class MovieDetails extends React.Component {
                 </Button>
                 {this.props.isAuthenticated ? (
                   <>
-                    {!this.props.movie.rating ? (
+                    {!this.props.movie.userRating > 0 ? (
                       <Link to={`../reviewAdd/${this.props.movie.id}`}>
                         <Button className="float-right" color="success">
                           Utwórz recenzję
                         </Button>
                       </Link>
                     ) : (
-                      <Button className="float-right" color="success">
-                        Wyświetl swoją recenzję
-                      </Button>
+                      <Link to={`../review/${this.props.movie.id}`}>
+                        <Button className="float-right" color="success">
+                          Wyświetl swoją recenzję
+                        </Button>
+                      </Link>
                     )}
                   </>
                 ) : (
@@ -108,14 +110,16 @@ class MovieDetails extends React.Component {
                 Średnia ocen:
                 <br />
                 <Rating
-                  placeholderRating={this.props.movie.rating}
+                  placeholderRating={this.props.movie.usersAverage}
                   emptySymbol="tim-icons icon-shape-star rating"
                   fullSymbol="tim-icons icon-shape-star text-success rating"
                   placeholderSymbol="tim-icons icon-shape-star text-success rating"
                   readonly
                 />
                 <br />
-                <p className="ratingText">{"  7,8/10"}</p>
+                <p className="ratingText">
+                  {this.props.movie.userRating + "/5"}
+                </p>
               </div>
 
               {this.props.isAuthenticated ? (
@@ -123,14 +127,16 @@ class MovieDetails extends React.Component {
                   Twoja ocena:
                   <br />
                   <Rating
-                    placeholderRating={this.props.movie.rating}
+                    placeholderRating={this.props.movie.userRating}
                     emptySymbol="tim-icons icon-shape-star rating"
                     fullSymbol="tim-icons icon-shape-star text-success rating"
                     placeholderSymbol="tim-icons icon-shape-star text-success rating"
                     readonly
                   />
                   <br />
-                  <p className="ratingText">{"  7,8/10"}</p>
+                  <p className="ratingText">
+                    {this.props.movie.userRating + "/5"}
+                  </p>
                 </div>
               ) : (
                 <></>

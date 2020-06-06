@@ -14,6 +14,7 @@ namespace backend.Services.Interfaces
         Task<ResultDto<BaseDto>> UpdateReview(int reviewid, ReviewModel reviewModel, ClaimsPrincipal user);
         Task<ResultDto<BaseDto>> DeleteReview(int id, ClaimsPrincipal user);
         Task<ResultDto<ReviewDto>> GetReview(int reviewid, ClaimsPrincipal user);
+        Task<ResultDto<ReviewDto>> GetLoggedInUsersReview(int movieId, ClaimsPrincipal user);
         Task<ResultDto<ListReviewDto>> GetReviews(int movieid, ClaimsPrincipal user);
     }
 }

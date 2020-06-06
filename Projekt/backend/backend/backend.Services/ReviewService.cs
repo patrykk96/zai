@@ -3,6 +3,7 @@ using backend.Data.Dto;
 using backend.Data.Enums;
 using backend.Data.Models;
 using backend.Repository;
+using backend.Services.Helpers;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,10 +40,9 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-            var userId = userIdentity.Id;
+            string userId = await UserHelper.GetId(user, _userManager);
 
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
                 result.Error = "Autor poradnika nie został odnaleziony";
                 return result;
@@ -97,8 +97,7 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik jest wlascicielem recenzji
-            var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-            var userId = userIdentity.Id;
+            string userId = await UserHelper.GetId(user, _userManager);
 
             var review = await _reviewRepo.GetEntity(x => x.Id == reviewid);
 
@@ -136,6 +135,60 @@ namespace backend.Services
 
             //probuje uzyskac wskazana recenzje
             var review = await _reviewRepo.GetEntity(x => x.Id == reviewid);
+
+            if (review == null)
+            {
+                result.Error = "Nie odnaleziono recenzji";
+                return result;
+            }
+
+            //pobieram nazwe uzytkownika
+            var reviewOwner = await _userManager.FindByIdAsync(review.UserId);
+            var reviewOwnerName = reviewOwner.UserName;
+
+            //pobieram nazwe filmu
+            var movie = await _repo.GetEntity(x => x.Id == review.MovieId);
+
+            if (movie == null)
+            {
+                result.Error = "Nie odnaleziono filmu";
+                return result;
+            }
+
+            //tworze obiekt z recenzja i zwracam go
+            var reviewToSend = new ReviewDto()
+            {
+                ReviewId = review.Id,
+                Content = review.Content,
+                Rating = review.Score,
+                Author = reviewOwnerName,
+                MovieId = review.MovieId,
+                MovieName = movie.Name
+            };
+
+            result.SuccessResult = reviewToSend;
+
+            return result;
+        }
+
+        public async Task<ResultDto<ReviewDto>> GetLoggedInUsersReview(int movieId, ClaimsPrincipal user)
+        {
+            var result = new ResultDto<ReviewDto>()
+            {
+                Error = null
+            };
+
+            string userId = await UserHelper.GetId(user, _userManager);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                result.Error = "Nie odnaleziono autora";
+
+                return result;
+            }
+
+            //probuje uzyskac wskazana recenzje
+            var review = await _reviewRepo.GetEntity(x => x.MovieId == movieId  && x.UserId == userId);
 
             if (review == null)
             {
@@ -233,10 +286,9 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-            var userId = userIdentity.Id;
+            string userId = await UserHelper.GetId(user, _userManager);
 
-            if (userId == null)
+            if (string.IsNullOrEmpty(userId))
             {
                 result.Error = "Autor poradnika nie został odnaleziony";
                 return result;

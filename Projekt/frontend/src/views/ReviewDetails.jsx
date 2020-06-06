@@ -29,8 +29,8 @@ class ReviewDetails extends React.Component {
     const {
       match: { params },
     } = this.props;
-    this.setState({ id: params.reviewId });
-    this.props.movieReviewGet(params.reviewId);
+    this.setState({ id: params.movieId });
+    this.props.movieUserReviewGet(params.movieId);
   }
 
   render() {
@@ -90,8 +90,8 @@ class ReviewDetails extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    movieReviewGet: (movieId) =>
-      dispatch.movieReviewActions.movieReviewGet(movieId),
+    movieUserReviewGet: (movieId) =>
+      dispatch(movieReviewActions.movieUserReviewGet(movieId)),
   };
 };
 
