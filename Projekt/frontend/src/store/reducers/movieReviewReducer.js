@@ -7,10 +7,11 @@ const initialState = {
   loading: false,
   reviews: [],
   review: null,
+  redirect: false,
 };
 
 const movieReviewAddStart = (state) => {
-  return updateObject(state, { loading: true });
+  return updateObject(state, { loading: true, redirect: false });
 };
 
 const movieReviewAddSuccess = (state, action) => {
@@ -18,6 +19,7 @@ const movieReviewAddSuccess = (state, action) => {
     error: null,
     loading: false,
     response: action.response,
+    redirect: true,
   });
 };
 
@@ -29,7 +31,7 @@ const movieReviewAddFailed = (state, action) => {
 };
 
 const movieReviewEditStart = (state) => {
-  return updateObject(state, { loading: true });
+  return updateObject(state, { loading: true, redirect: false });
 };
 
 const movieReviewEditSuccess = (state, action) => {
@@ -37,6 +39,7 @@ const movieReviewEditSuccess = (state, action) => {
     error: null,
     loading: false,
     response: action.response,
+    redirect: true,
   });
 };
 
@@ -60,25 +63,6 @@ const movieReviewGetSuccess = (state, action) => {
 };
 
 const movieReviewGetFailed = (state, action) => {
-  return updateObject(state, {
-    error: action.error,
-    loading: false,
-  });
-};
-
-const movieUserReviewGetStart = (state) => {
-  return updateObject(state, { loading: true });
-};
-
-const movieUserReviewGetSuccess = (state, action) => {
-  return updateObject(state, {
-    error: null,
-    loading: false,
-    review: action.response.successResult,
-  });
-};
-
-const movieUserReviewGetFailed = (state, action) => {
   return updateObject(state, {
     error: action.error,
     loading: false,
@@ -145,13 +129,6 @@ const movieReviewReducer = (state = initialState, action) => {
       return movieReviewGetSuccess(state, action);
     case actionTypes.MOVIE_REVIEW_GET_FAILED:
       return movieReviewGetFailed(state, action);
-
-    case actionTypes.MOVIE_USER_REVIEW_GET_START:
-      return movieUserReviewGetStart(state);
-    case actionTypes.MOVIE_USER_REVIEW_GET_SUCCESS:
-      return movieUserReviewGetSuccess(state, action);
-    case actionTypes.MOVIE_USER_REVIEW_GET_FAILED:
-      return movieUserReviewGetFailed(state, action);
 
     case actionTypes.MOVIE_REVIEWS_GET_START:
       return movieReviewsGetStart(state);

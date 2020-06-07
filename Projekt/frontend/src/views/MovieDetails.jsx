@@ -51,9 +51,11 @@ class MovieDetails extends React.Component {
             <CardHeader>
               <CardTitle tag="h3">
                 {this.props.movie.name}
-                <Button className="float-right" color="success">
-                  Wyświetl recenzje
-                </Button>
+                <Link to={`../reviews/${this.props.movie.id}`}>
+                  <Button className="float-right" color="success">
+                    Wyświetl recenzje
+                  </Button>
+                </Link>
                 {this.props.isAuthenticated ? (
                   <>
                     {!this.props.movie.userRating > 0 ? (
@@ -63,7 +65,7 @@ class MovieDetails extends React.Component {
                         </Button>
                       </Link>
                     ) : (
-                      <Link to={`../review/${this.props.movie.id}`}>
+                      <Link to={`../review/${this.props.movie.userReviewId}`}>
                         <Button className="float-right" color="success">
                           Wyświetl swoją recenzję
                         </Button>

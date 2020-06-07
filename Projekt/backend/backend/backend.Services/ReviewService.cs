@@ -20,13 +20,13 @@ namespace backend.Services
 {
     public class ReviewService : IReviewService
     {
-        private readonly IRepository<Movie> _repo;
+        private readonly IRepository<Movie> _movieRepo;
         private readonly IRepository<Review> _reviewRepo;
         private readonly UserManager<User> _userManager;
 
         public ReviewService(IRepository<Movie> repo, IRepository<Review> reviewRepo, UserManager<User> userManager)
         {
-            _repo = repo;
+            _movieRepo = repo;
             _reviewRepo = reviewRepo;
             _userManager = userManager;
         }
@@ -40,7 +40,7 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -49,7 +49,7 @@ namespace backend.Services
             }
 
             //sprawdzam czy film istnieje
-            bool exists = await _repo.Exists(x => x.Id == reviewModel.MovieId);
+            bool exists = await _movieRepo.Exists(x => x.Id == reviewModel.MovieId);
 
             if (!exists)
             {
@@ -97,7 +97,7 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik jest wlascicielem recenzji
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             var review = await _reviewRepo.GetEntity(x => x.Id == reviewid);
 
@@ -143,11 +143,10 @@ namespace backend.Services
             }
 
             //pobieram nazwe uzytkownika
-            var reviewOwner = await _userManager.FindByIdAsync(review.UserId);
-            var reviewOwnerName = reviewOwner.UserName;
+            var loggedInUserId = await _userManager.GetId(user);
 
             //pobieram nazwe filmu
-            var movie = await _repo.GetEntity(x => x.Id == review.MovieId);
+            var movie = await _movieRepo.GetEntity(x => x.Id == review.MovieId);
 
             if (movie == null)
             {
@@ -161,7 +160,8 @@ namespace backend.Services
                 ReviewId = review.Id,
                 Content = review.Content,
                 Rating = review.Score,
-                Author = reviewOwnerName,
+                Author = review.User.UserName,
+                IsAuthor = review.UserId == loggedInUserId ? true : false,
                 MovieId = review.MovieId,
                 MovieName = movie.Name
             };
@@ -171,61 +171,7 @@ namespace backend.Services
             return result;
         }
 
-        public async Task<ResultDto<ReviewDto>> GetLoggedInUsersReview(int movieId, ClaimsPrincipal user)
-        {
-            var result = new ResultDto<ReviewDto>()
-            {
-                Error = null
-            };
-
-            string userId = await UserHelper.GetId(user, _userManager);
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                result.Error = "Nie odnaleziono autora";
-
-                return result;
-            }
-
-            //probuje uzyskac wskazana recenzje
-            var review = await _reviewRepo.GetEntity(x => x.MovieId == movieId  && x.UserId == userId);
-
-            if (review == null)
-            {
-                result.Error = "Nie odnaleziono recenzji";
-                return result;
-            }
-
-            //pobieram nazwe uzytkownika
-            var reviewOwner = await _userManager.FindByIdAsync(review.UserId);
-            var reviewOwnerName = reviewOwner.UserName;
-
-            //pobieram nazwe filmu
-            var movie = await _repo.GetEntity(x => x.Id == review.MovieId);
-
-            if (movie == null)
-            {
-                result.Error = "Nie odnaleziono filmu";
-                return result;
-            }
-
-            //tworze obiekt z recenzja i zwracam go
-            var reviewToSend = new ReviewDto()
-            {
-                ReviewId = review.Id,
-                Content = review.Content,
-                Rating = review.Score,
-                Author = reviewOwnerName,
-                MovieId = review.MovieId,
-                MovieName = movie.Name
-            };
-
-            result.SuccessResult = reviewToSend;
-
-            return result;
-        }
-
-        public async Task<ResultDto<ListReviewDto>> GetReviews(int movieid, ClaimsPrincipal user)
+        public async Task<ResultDto<ListReviewDto>> GetReviews(int movieId, ClaimsPrincipal user)
         {
 
             var result = new ResultDto<ListReviewDto>()
@@ -233,12 +179,24 @@ namespace backend.Services
                 Error = null
             };
 
-            var reviews = await _reviewRepo.GetBy(x => x.MovieId == movieid);
+            List<Review> reviews = new List<Review>();
+
+            var userId = await _userManager.GetId(user);
+
+            if (movieId != 0)
+            {
+                reviews = await _reviewRepo.GetBy(x => x.MovieId == movieId);
+            }
+            else
+            {
+                reviews = await _reviewRepo.GetBy(x => x.UserId == userId);
+            }
+            
 
             //pobieram nazwe filmu
-            var movie = await _repo.GetEntity(x => x.Id == movieid);
+            var movie = await _movieRepo.GetEntity(x => x.Id == movieId);
 
-            if (movie == null)
+            if (movie == null && movieId != 0)
             {
                 result.Error = "Nie odnaleziono filmu";
                 return result;
@@ -250,17 +208,33 @@ namespace backend.Services
             foreach (var review in reviews)
             {
                 //pobieram nazwe uzytkownika
-                var reviewOwner = await _userManager.FindByIdAsync(review.UserId);
-                var reviewOwnerName = reviewOwner.UserName;
+                var reviewContent = review.Content.Substring(0, Math.Min(review.Content.Length, 50));
+
+                if (reviewContent.Length == 50)
+                {
+                    reviewContent += "...";
+                }
+
+                string movieName;
+
+                if (movieId == 0)
+                {
+                    var movieFromRepo = await _movieRepo.GetEntity(x => x.Id == review.MovieId);
+                    movieName = movieFromRepo.Name;
+                }
+                else
+                {
+                    movieName = movie.Name;
+                }
 
                 var m = new ReviewDto()
                 {
                     ReviewId = review.Id,
-                    Content = review.Content,
+                    Content = reviewContent,
                     Rating = review.Score,
-                    Author = reviewOwnerName,
+                    Author = review.User.UserName,
                     MovieId = review.MovieId,
-                    MovieName = movie.Name
+                    MovieName = movieName
                 };
 
                 reviewsToSend.Add(m);
@@ -286,7 +260,7 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -295,7 +269,7 @@ namespace backend.Services
             }
 
             //sprawdzam czy film istnieje
-            bool exists = await _repo.Exists(x => x.Id == reviewModel.MovieId);
+            bool exists = await _movieRepo.Exists(x => x.Id == reviewModel.MovieId);
 
             if (!exists)
             {

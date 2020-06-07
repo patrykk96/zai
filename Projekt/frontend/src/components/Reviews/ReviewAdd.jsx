@@ -1,7 +1,7 @@
 import React from "react";
 import Rating from "react-rating";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import {
   Button,
@@ -62,6 +62,13 @@ class ReviewAdd extends React.Component {
     this.setState({ rating: value });
   };
 
+  renderRedirect = () => {
+    if (this.props.redirect) {
+      let route = `../movie/${this.props.movie.id}`;
+      return <Redirect to={route} />;
+    }
+  };
+
   handleInputChange = (event) => {
     event.preventDefault();
     this.setState({ [event.target.name]: event.target.value });
@@ -70,6 +77,7 @@ class ReviewAdd extends React.Component {
   render() {
     return (
       <>
+        {this.renderRedirect()}
         <div className="content">
           {this.props.loading || !this.props.movie ? (
             <Spinner />
@@ -155,6 +163,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.movieReviewReducer.loading,
+    redirect: state.movieReviewReducer.redirect,
     error: state.movieReducer.error,
     movie: state.movieReducer.movie,
   };

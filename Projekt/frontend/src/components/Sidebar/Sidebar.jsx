@@ -77,6 +77,12 @@ class Sidebar extends React.Component {
           icon: "tim-icons icon-heart-2",
           layout: "/main",
         });
+        routes.push({
+          path: "/userReviews",
+          name: "Twoje recenzje",
+          icon: "tim-icons icon-notes",
+          layout: "/main",
+        });
       }
       this.setState({
         routes: routes,

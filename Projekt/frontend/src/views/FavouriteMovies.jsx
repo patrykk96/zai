@@ -13,6 +13,7 @@ import {
 import * as movieActions from "store/actions/movieActions";
 import FavouriteMovie from "components/Movies/FavouriteMovie";
 import Spinner from "components/Spinner";
+import ErrorText from "components/ErrorText/ErrorText";
 
 class FavouriteMovies extends React.Component {
   constructor(props) {
@@ -70,6 +71,7 @@ class FavouriteMovies extends React.Component {
                 </thead>
                 <tbody>{movies}</tbody>
               </Table>
+              <ErrorText error={this.props.error}></ErrorText>
             </CardBody>
           </Card>
         )}

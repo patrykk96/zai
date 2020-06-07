@@ -22,6 +22,7 @@ import ReviewAdd from "components/Reviews/ReviewAdd";
 import ReviewUpdate from "components/Reviews/ReviewUpdate";
 import FavouriteMovies from "views/FavouriteMovies";
 import ReviewDetails from "views/ReviewDetails";
+import MovieReviews from "views/MovieReviews";
 
 var routes = [
   {
@@ -53,7 +54,7 @@ var routes = [
     layout: "/main",
   },
   {
-    path: "/reviewUpdate/:movieId",
+    path: "/reviewUpdate/:reviewId",
     name: "Zaktualizuj recenzję",
     icon: "tim-icons icon-badge",
     component: ReviewUpdate,
@@ -67,10 +68,24 @@ var routes = [
     layout: "/main",
   },
   {
-    path: "/review/:movieId",
+    path: "/review/:reviewId",
     name: "Szczegóły",
     icon: "tim-icons icon-badge",
     component: ReviewDetails,
+    layout: "/main",
+  },
+  {
+    path: "/reviews/:movieId",
+    name: "Recenzje",
+    icon: "tim-icons icon-badge",
+    component: MovieReviews,
+    layout: "/main",
+  },
+  {
+    path: "/userReviews",
+    name: "Recenzje",
+    icon: "tim-icons icon-badge",
+    component: MovieReviews,
     layout: "/main",
   },
 ];

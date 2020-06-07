@@ -30,8 +30,12 @@ class ReviewDetails extends React.Component {
       match: { params },
     } = this.props;
     this.setState({ id: params.movieId });
-    this.props.movieUserReviewGet(params.movieId);
+    this.props.movieReviewGet(params.reviewId);
   }
+
+  submitMovieReviewDelete = () => {
+    this.props.movieReviewDelete(this.props.review.reviewId);
+  };
 
   render() {
     return (
@@ -44,26 +48,32 @@ class ReviewDetails extends React.Component {
               <CardTitle tag="h3">
                 {this.props.review.movieName}
 
-                {this.props.isAuthenticated ? (
+                {this.props.isAuthenticated && this.props.review.isAuthor ? (
                   <>
-                    <Link to={`../reviewUpdate/${this.props.movie.id}`}>
+                    <Link to={`../reviewUpdate/${this.props.review.reviewId}`}>
                       <Button className="float-right" color="success">
                         Edytuj recenzję
                       </Button>
                     </Link>
 
-                    <Button className="float-right" color="warning">
+                    <Button
+                      className="float-right"
+                      color="warning"
+                      onClick={this.submitMovieReviewDelete}
+                    >
                       Usuń recenzję
                     </Button>
                   </>
                 ) : (
                   <></>
                 )}
+                <br />
               </CardTitle>
+              <h5>Autor: {this.props.review.author}</h5>
 
               <hr />
               <div className="rating">
-                Twoja ocena
+                {"      "}Ocena
                 <br />
                 <Rating
                   placeholderRating={this.props.review.rating}
@@ -73,7 +83,7 @@ class ReviewDetails extends React.Component {
                   readonly
                 />
                 <br />
-                <p className="ratingText">{"  7,8/10"}</p>
+                <p className="ratingText">{this.props.review.rating + "/5"}</p>
               </div>
             </CardHeader>
 
@@ -90,8 +100,10 @@ class ReviewDetails extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    movieUserReviewGet: (movieId) =>
-      dispatch(movieReviewActions.movieUserReviewGet(movieId)),
+    movieReviewGet: (reviewId) =>
+      dispatch(movieReviewActions.movieReviewGet(reviewId)),
+    movieReviewDelete: (reviewId) =>
+      dispatch(movieReviewActions.movieReviewDelete(reviewId)),
   };
 };
 

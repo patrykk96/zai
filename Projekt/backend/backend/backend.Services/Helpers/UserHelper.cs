@@ -10,7 +10,7 @@ namespace backend.Services.Helpers
 {
     public static class UserHelper
     {
-        public async static Task<string> GetId(ClaimsPrincipal user, UserManager<User> userManager)
+        public async static Task<string> GetId(this UserManager<User> userManager, ClaimsPrincipal user)
         {
             string userId;
             // sprawdzam czy uzytkownik istnieje

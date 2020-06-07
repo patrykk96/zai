@@ -105,27 +105,6 @@ namespace backend.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getUserReview/{movieId}")]
-        public async Task<IActionResult> GetLoggedInUsersReview(int movieId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var user = User;
-
-            var result = await _reviewService.GetLoggedInUsersReview(movieId, user);
-
-            if (result.Error != null)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok(result);
-        }
-
-
         [AllowAnonymous]
         [HttpGet("getReviews/{movieid}")]
         public async Task<IActionResult> GetReviews(int movieid)

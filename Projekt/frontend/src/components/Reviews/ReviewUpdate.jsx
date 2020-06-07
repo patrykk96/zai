@@ -1,7 +1,7 @@
 import React from "react";
 import Rating from "react-rating";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import {
   Button,
@@ -25,7 +25,7 @@ class ReviewUpdate extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      movieId: "",
+      reviewId: "",
       reviewContent: "",
       rating: 0,
       invalidRating: false,
@@ -36,32 +36,36 @@ class ReviewUpdate extends React.Component {
     const {
       match: { params },
     } = this.props;
-    this.setState({ movieId: params.movieId });
-    this.props.movieGet(params.movieId);
-    this.props.movieReviewGet(params.movieId);
+    this.setState({ reviewId: params.reviewId });
+    this.props.movieReviewGet(params.reviewId);
   }
   submitReview = (event) => {
-    if (this.state.rating !== 0) {
-      this.setState({ invalidRating: false });
-    } else {
-      this.setState({ invalidRating: true });
-      event.preventDefault();
-      return;
-    }
     const review = {
-      movieId: parseInt(this.state.movieId),
-      content: this.state.reviewContent,
-      score: this.state.rating,
+      movieId: parseInt(this.props.review.movieId),
+      content:
+        this.state.reviewContent.length > 0
+          ? this.state.reviewContent
+          : this.props.review.content,
+      score:
+        this.state.rating !== 0 ? this.state.rating : this.props.review.rating,
     };
 
-    const reviewId = this.props.review.id;
+    const reviewId = this.props.review.reviewId;
     event.preventDefault();
     this.props.movieReviewEdit(reviewId, review);
+  };
+
+  renderRedirect = () => {
+    if (this.props.redirect) {
+      let route = `../review/${this.props.review.reviewId}`;
+      return <Redirect to={route} />;
+    }
   };
 
   setRating = (value) => {
     this.setState({ invalidRating: false });
     this.setState({ rating: value });
+    this.props.review.rating = value;
   };
 
   handleInputChange = (event) => {
@@ -72,6 +76,7 @@ class ReviewUpdate extends React.Component {
   render() {
     return (
       <>
+        {this.renderRedirect()}
         <div className="content">
           {this.props.loading || !this.props.review ? (
             <Spinner />
@@ -83,7 +88,7 @@ class ReviewUpdate extends React.Component {
                     <CardTitle tag="h3">
                       <i className="tim-icons icon-controller text-success" />{" "}
                       Zaktualizuj recenzję
-                      <Link to={`../movie/${this.props.movie.id}`}>
+                      <Link to={`../review/${this.props.review.reviewId}`}>
                         <Button
                           className="float-right"
                           color="link text-warning"
@@ -98,26 +103,26 @@ class ReviewUpdate extends React.Component {
                       <FormGroup>
                         <label>Tytuł filmu</label>
                         <br />
-                        {this.props.movie.name}
+                        {this.props.review.movieName}
                       </FormGroup>
 
                       <FormGroup>
                         <label>Treść recenzji</label>
                         <Input
-                          defaultValue=""
                           placeholder="Treść recenzji"
                           name="reviewContent"
                           type="textarea"
-                          value={this.props.review.content}
+                          defaultValue={this.props.review.content}
                           maxLength="1000"
                           required
+                          col="100"
                           onChange={(event) => this.handleInputChange(event)}
                         />
                       </FormGroup>
 
                       <FormGroup>
                         <Rating
-                          placeholderRating={this.state.rating}
+                          placeholderRating={this.props.review.rating}
                           emptySymbol="tim-icons icon-shape-star rating"
                           fullSymbol="tim-icons icon-shape-star text-success rating"
                           placeholderSymbol="tim-icons icon-shape-star text-success rating"
@@ -152,8 +157,8 @@ const mapDispatchToProps = (dispatch) => {
     movieGet: (movieId) => dispatch(movieActions.movieGet(movieId)),
     movieReviewEdit: (reviewId, review) =>
       dispatch(movieReviewActions.movieReviewEdit(reviewId, review)),
-    movieReviewGet: (movieId) =>
-      dispatch(movieReviewActions.movieReviewGet(movieId)),
+    movieReviewGet: (reviewId) =>
+      dispatch(movieReviewActions.movieReviewGet(reviewId)),
   };
 };
 
@@ -163,6 +168,7 @@ const mapStateToProps = (state) => {
     error: state.movieReducer.error,
     movie: state.movieReducer.movie,
     review: state.movieReviewReducer.review,
+    redirect: state.movieReviewReducer.redirect,
   };
 };
 

@@ -187,9 +187,10 @@ namespace backend.Services
                 return result;
             }
 
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             int userRating; // zmienna dla oceny filmu aktualnego usera
+            int userReviewId; // id recenzji, o ile autor ja stworzyl
 
 
             //probuje uzyskac recenzje aktualnego usera
@@ -198,10 +199,12 @@ namespace backend.Services
             if (userReview == null)
             {
                 userRating = 0;
+                userReviewId = 0;
             }
             else
             {
                 userRating = userReview.Score;
+                userReviewId = userReview.Id;
             }
 
 
@@ -234,6 +237,7 @@ namespace backend.Services
                 Logo = movie.Logo,
                 UserRating = userRating,
                 UsersAverage = numberOfReviews != 0 ? reviewScoreSum / numberOfReviews : 0,
+                UserReviewId = userReviewId,
                 IsFavourite = isFavourite
             };
 
@@ -251,7 +255,7 @@ namespace backend.Services
             };
 
 
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             var movies = await _repo.GetAll();
 
@@ -263,7 +267,7 @@ namespace backend.Services
                 int userRating = 0; // zmienna dla oceny filmu aktualnego usera
 
                 //pobieram recenzje do obliczenia sredniej oceny filmu
-                var reviews = await _reviewRepo.GetBy(x => x.MovieId == movie.Id);
+                List<Review> reviews = await _reviewRepo.GetBy(x => x.MovieId == movie.Id);
 
                 //zmienne do liczenia sredniej
                 double reviewScoreSum = 0;
@@ -314,7 +318,7 @@ namespace backend.Services
             try
             {
 
-                string userId = await UserHelper.GetId(user, _userManager);
+                string userId = await _userManager.GetId(user);
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -370,7 +374,7 @@ namespace backend.Services
 
             try
             {
-                string userId = await UserHelper.GetId(user, _userManager);
+                string userId = await _userManager.GetId(user);
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -422,7 +426,7 @@ namespace backend.Services
             {
                 var movies = await _repo.GetAll();
 
-                string userId = await UserHelper.GetId(user, _userManager);
+                string userId = await _userManager.GetId(user);
 
                 List<MovieDto> moviesToSend = new List<MovieDto>();
 

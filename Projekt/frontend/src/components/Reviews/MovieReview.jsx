@@ -6,14 +6,12 @@ class MovieReview extends React.Component {
   render() {
     return (
       <tr>
-        <td width="15%">{this.props.reviewAuthor}</td>
-        <td width="25%" className="tablesorter">
+        <td width="10%">{this.props.reviewAuthor}</td>
+        <td width="20%" className="tablesorter">
           {" "}
           {this.props.movieName}
         </td>
-        <td width="30%">
-          <small>{this.props.reviewContent}</small>
-        </td>
+        <td width="30%">{this.props.reviewContent}</td>
         <td width="10%" className="text-center">
           <Rating
             placeholderRating={this.props.rating}
@@ -24,7 +22,13 @@ class MovieReview extends React.Component {
           />
         </td>
         <td width="10%" className="text-center">
-          <Link to={`review/${this.props.id}`}>
+          <Link
+            to={
+              this.props.isUserReviews
+                ? `../review/${this.props.id}`
+                : `review/${this.props.id}`
+            }
+          >
             <i className="tim-icons icon-user-run" />
           </Link>
         </td>

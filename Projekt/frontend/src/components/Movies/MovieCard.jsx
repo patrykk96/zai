@@ -2,6 +2,7 @@ import React from "react";
 import Rating from "react-rating";
 import "./MovieCard.css";
 import { Link } from "react-router-dom";
+import { Textfit } from "react-textfit";
 
 import {
   Card,
@@ -27,10 +28,16 @@ class MovieCard extends React.Component {
         <Link to={`movie/${this.props.id}`}>
           <Card>
             <CardHeader>
-              <h5 className="card-category">Test</h5>
               <CardTitle tag="h3">
-                <i className="tim-icons icon-tv-2 text-info" />{" "}
-                {this.props.movieName}
+                {/* <i className="tim-icons icon-tv-2 text-info" /> */}
+                <Textfit
+                  mode="single"
+                  forceSingleModeWidth={false}
+                  className="movieTitle"
+                >
+                  {" "}
+                  {this.props.movieName}{" "}
+                </Textfit>
               </CardTitle>
 
               <CardImg
