@@ -3,6 +3,7 @@ using backend.Data.Dto;
 using backend.Data.Enums;
 using backend.Data.Models;
 using backend.Repository;
+using backend.Services.Helpers;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,14 +22,17 @@ namespace backend.Services
         private readonly IRepository<Movie> _repo;
         private readonly IRepository<Review> _reviewRepo;
         private readonly UserManager<User> _userManager;
+        private readonly IRepository<FavouriteMovie> _favouriteMovieRepo;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public MovieService(IRepository<Movie> repo, IRepository<Review> reviewRepo, UserManager<User> userManager, IHostingEnvironment hostingEnvironment)
+        public MovieService(IRepository<Movie> repo, IRepository<Review> reviewRepo, UserManager<User> userManager, IHostingEnvironment hostingEnvironment, IRepository<FavouriteMovie> favouriteMovieRepo)
         {
             _repo = repo;
             _reviewRepo = reviewRepo;
             _userManager = userManager;
             _hostingEnvironment = hostingEnvironment;
+            _favouriteMovieRepo = favouriteMovieRepo;
+            _userManager = userManager;
         }
 
 
@@ -167,7 +171,7 @@ namespace backend.Services
         }
 
         //pobranie pojedynczego filmu
-        public async Task<ResultDto<MovieDto>> GetMovie(int movieid, ClaimsPrincipal user)
+        public async Task<ResultDto<MovieDto>> GetMovie(int movieId, ClaimsPrincipal user)
         {
             var result = new ResultDto<MovieDto>()
             {
@@ -175,7 +179,7 @@ namespace backend.Services
             };
 
             //probuje uzyskac wskazany film
-            var movie = await _repo.GetEntity(x => x.Id == movieid);
+            var movie = await _repo.GetEntity(x => x.Id == movieId);
 
             if (movie == null)
             {
@@ -183,34 +187,29 @@ namespace backend.Services
                 return result;
             }
 
-            string userId;
-            // sprawdzam czy uzytkownik istnieje
-            if (user.Identity.Name != null) {
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-                userId = userIdentity.Id;
-            }
-            else
-            {
-                userId = null;
-            }
+            string userId = await _userManager.GetId(user);
+
             int userRating; // zmienna dla oceny filmu aktualnego usera
+            int userReviewId; // id recenzji, o ile autor ja stworzyl
 
 
             //probuje uzyskac recenzje aktualnego usera
-            var userReview = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == movieid);
+            var userReview = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == movieId);
 
             if (userReview == null)
             {
                 userRating = 0;
+                userReviewId = 0;
             }
             else
             {
                 userRating = userReview.Score;
+                userReviewId = userReview.Id;
             }
 
 
             //pobieram recenzje do obliczenia sredniej oceny filmu
-            var reviews = await _reviewRepo.GetBy(x => x.MovieId == movieid);
+            var reviews = await _reviewRepo.GetBy(x => x.MovieId == movieId);
 
             //zmienne do liczenia sredniej
             double reviewScoreSum = 0;
@@ -223,6 +222,12 @@ namespace backend.Services
                 numberOfReviews++;
             }
 
+            bool isFavourite = false; 
+            //sprawdzenie czy film jest ustawiony jako ulubiony dla zalogowanego u¿ytkownika
+            if (user != null)
+            {
+                isFavourite = await _favouriteMovieRepo.Exists(x => x.MovieId == movieId && x.UserId == userId);
+            }
             //tworze obiekt z filmem i zwracam go
             var movieToSend = new MovieDto()
             {
@@ -232,6 +237,8 @@ namespace backend.Services
                 Logo = movie.Logo,
                 UserRating = userRating,
                 UsersAverage = numberOfReviews != 0 ? reviewScoreSum / numberOfReviews : 0,
+                UserReviewId = userReviewId,
+                IsFavourite = isFavourite
             };
 
             result.SuccessResult = movieToSend;
@@ -248,17 +255,7 @@ namespace backend.Services
             };
 
 
-            string userId;
-            // sprawdzam czy uzytkownik istnieje
-            if (user.Identity.Name != null)
-            {
-                var userIdentity = await _userManager.FindByEmailAsync(user.Identity.Name);
-                userId = userIdentity.Id;
-            }
-            else
-            {
-                userId = null;
-            }
+            string userId = await _userManager.GetId(user);
 
             var movies = await _repo.GetAll();
 
@@ -295,7 +292,7 @@ namespace backend.Services
                     Logo = movie.Logo,
                     Name = movie.Name,
                     UserRating = userRating,
-                    UsersAverage = numberOfReviews != 0 ? reviewScoreSum / numberOfReviews : 0,
+                    UsersAverage = numberOfReviews != 0 ? reviewScoreSum/numberOfReviews : 0
                 };
 
                 moviesToSend.Add(m);
@@ -309,6 +306,180 @@ namespace backend.Services
             result.SuccessResult = movieList;
 
             return result;
+        }
+
+        public async Task<ResultDto<BaseDto>> AddFavouriteMovie(ClaimsPrincipal user, int movieId)
+        {
+            var result = new ResultDto<BaseDto>()
+            {
+                Error = null
+            };
+
+            try
+            {
+
+                string userId = await _userManager.GetId(user);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    result.Error = "Nie znaleziono u¿ytkownika";
+
+                    return result;
+                }
+
+                var movieExists = await _repo.Exists(x => x.Id == movieId);
+
+                if (!movieExists)
+                {
+                    result.Error = "Nie znaleziono filmu";
+
+                    return result;
+                }
+
+                var favouriteMovieAlreadyExists = await _favouriteMovieRepo.Exists(x => x.UserId == userId && x.MovieId == movieId);
+
+                if (favouriteMovieAlreadyExists)
+                {
+                    result.Error = "Ten film zosta³ ju¿ dodany jako ulubiony";
+
+                    return result;
+                }
+
+                var favouriteMovie = new FavouriteMovie()
+                {
+                    MovieId = movieId,
+                    UserId = userId
+                };
+
+                await _favouriteMovieRepo.Add(favouriteMovie);
+
+                return result;
+
+            }
+            catch (Exception)
+            {
+                result.Error = "Wyst¹pi³ b³¹d";
+
+                return result;
+            }
+
+        }
+
+        public async Task<ResultDto<BaseDto>> DeleteFavouriteMovie(ClaimsPrincipal user, int movieId)
+        {
+            var result = new ResultDto<BaseDto>()
+            {
+                Error = null
+            };
+
+            try
+            {
+                string userId = await _userManager.GetId(user);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    result.Error = "Nie znaleziono u¿ytkownika";
+
+                    return result;
+                }
+
+                var movieExists = await _repo.Exists(x => x.Id == movieId);
+
+                if (!movieExists)
+                {
+                    result.Error = "Nie znaleziono filmu";
+
+                    return result;
+                }
+
+                var favouriteMovie = await _favouriteMovieRepo.GetEntity(x => x.UserId == userId && x.MovieId == movieId);
+
+                if (favouriteMovie == null)
+                {
+                    result.Error = "Ten film nie jest dodany jako ulubiony";
+
+                    return result;
+                }
+
+                await _favouriteMovieRepo.Delete(favouriteMovie);
+
+                return result;
+
+            }
+            catch (Exception)
+            {
+                result.Error = "Wyst¹pi³ b³¹d";
+
+                return result;
+            }
+
+        }
+
+        public async Task<ResultDto<ListMovieDto>> GetFavouriteMovies(ClaimsPrincipal user)
+        {
+            var result = new ResultDto<ListMovieDto>()
+            {
+                Error = null
+            };
+
+            try
+            {
+                var movies = await _repo.GetAll();
+
+                string userId = await _userManager.GetId(user);
+
+                List<MovieDto> moviesToSend = new List<MovieDto>();
+
+                foreach (var movie in movies)
+                {
+                    bool isFavourite = await _favouriteMovieRepo.Exists(x => x.UserId == userId && x.MovieId == movie.Id);
+
+                    if (isFavourite)
+                    {
+                        int userRating; // zmienna dla oceny filmu aktualnego usera
+
+
+                        //probuje uzyskac recenzje aktualnego usera
+                        var userReview = await _reviewRepo.GetEntity(x => x.UserId == userId && x.MovieId == movie.Id);
+
+                        if (userReview == null)
+                        {
+                            userRating = 0;
+                        }
+                        else
+                        {
+                            userRating = userReview.Score;
+                        }
+
+                        var m = new MovieDto()
+                        {
+                            Id = movie.Id,
+                            Description = movie.Description,
+                            Logo = movie.Logo,
+                            Name = movie.Name,
+                            UserRating = userRating
+                        };
+
+                        moviesToSend.Add(m);
+                    } 
+                }
+
+                var movieList = new ListMovieDto()
+                {
+                    List = moviesToSend
+                };
+
+                result.SuccessResult = movieList;
+
+                return result;
+            }
+            catch(Exception)
+            {
+                result.Error = "Wyst¹pi³ b³¹d";
+
+                return result;
+            }
+               
         }
 
         //metoda zapisujaca obrazek na dysku

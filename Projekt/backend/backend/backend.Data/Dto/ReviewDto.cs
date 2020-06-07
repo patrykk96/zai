@@ -10,6 +10,7 @@ namespace backend.Data.Dto
         public string Content { get; set; }
         public int Rating { get; set; }
         public string Author { get; set; }
+        public bool IsAuthor { get; set; }
         public int MovieId { get; set; }
         public string MovieName { get; set; }
     }

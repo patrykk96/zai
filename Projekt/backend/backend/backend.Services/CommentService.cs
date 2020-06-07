@@ -3,7 +3,7 @@ using backend.Data.Dto;
 using backend.Data.Enums;
 using backend.Data.Models;
 using backend.Repository;
-using backend.Services.helpers;
+using backend.Services.Helpers;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +43,7 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -90,7 +90,7 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             var comment = await _commentRepo.GetEntity(x => x.Id == commentid);
 
@@ -126,7 +126,7 @@ namespace backend.Services
             };
 
             //sprawdzam czy uzytkownik istnieje
-            string userId = await UserHelper.GetId(user, _userManager);
+            string userId = await _userManager.GetId(user);
 
             if (string.IsNullOrEmpty(userId))
             {

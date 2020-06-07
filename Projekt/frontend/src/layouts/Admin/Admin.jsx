@@ -27,7 +27,6 @@ import Sidebar from "components/Sidebar/Sidebar.jsx";
 
 import routes from "routes.js";
 
-
 var ps;
 
 class Admin extends React.Component {
@@ -36,7 +35,7 @@ class Admin extends React.Component {
     this.state = {
       backgroundColor: "blue",
       sidebarOpened:
-        document.documentElement.className.indexOf("nav-open") !== -1
+        document.documentElement.className.indexOf("nav-open") !== -1,
     };
   }
   componentDidMount() {
@@ -75,7 +74,7 @@ class Admin extends React.Component {
     document.documentElement.classList.toggle("nav-open");
     this.setState({ sidebarOpened: !this.state.sidebarOpened });
   };
-  getRoutes = routes => {
+  getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/main") {
         return (
@@ -90,20 +89,31 @@ class Admin extends React.Component {
       }
     });
   };
-  handleBgClick = color => {
+  handleBgClick = (color) => {
     this.setState({ backgroundColor: color });
   };
-  getBrandText = path => {
+  getBrandText = (path) => {
+    // for (let i = 0; i < routes.length; i++) {
+    //   console.log(routes[i].path);
+    //   if (
+    //     this.props.location.pathname.indexOf(
+    //       routes[i].layout + routes[i].path
+    //     ) !== -1
+    //   ) {
+    //     return routes[i].name;
+    //   }
+    // }
+
     for (let i = 0; i < routes.length; i++) {
       if (
-        this.props.location.pathname.indexOf(
-          routes[i].layout + routes[i].path
-        ) !== -1
+        routes[i].path.startsWith(
+          "/" + this.props.location.pathname.split("/")[2]
+        )
       ) {
         return routes[i].name;
       }
     }
-    return "Brand";
+    return "";
   };
   render() {
     return (
@@ -130,9 +140,8 @@ class Admin extends React.Component {
             />
             <Switch>
               {this.getRoutes(routes)}
-              <Redirect from="*" to="/main/dashboard"/>
+              <Redirect from="*" to="/main/dashboard" />
             </Switch>
-
           </div>
         </div>
       </>
@@ -140,9 +149,9 @@ class Admin extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    isAuthenticated: localStorage.getItem('token') !== null
+    isAuthenticated: localStorage.getItem("token") !== null,
   };
 };
 

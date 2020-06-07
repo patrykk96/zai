@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [Authorize(Roles = "User, Admin")]
+    [ApiController]
     [Route("api/[controller]")]
     public class ReviewController : Controller
     {

@@ -139,5 +139,66 @@ namespace backend.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("addFavouriteMovie/{movieId}")]
+        public async Task<IActionResult> AddFavouriteMovie(int movieId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _movieService.AddFavouriteMovie(user, movieId);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("deleteFavouriteMovie/{movieId}")]
+        public async Task<IActionResult> DeleteFavouriteMovie(int movieId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _movieService.DeleteFavouriteMovie(user, movieId);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("getFavouriteMovies")]
+        public async Task<IActionResult> GetFavouriteMovies()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = User;
+
+            var result = await _movieService.GetFavouriteMovies(user);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
     }
 }
