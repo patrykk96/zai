@@ -120,7 +120,7 @@ class MovieDetails extends React.Component {
                 />
                 <br />
                 <p className="ratingText">
-                  {this.props.movie.userRating + "/5"}
+                  {this.props.movie.usersAverage + "/5"}
                 </p>
               </div>
 

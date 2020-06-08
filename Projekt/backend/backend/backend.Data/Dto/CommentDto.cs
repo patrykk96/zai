@@ -10,5 +10,8 @@ namespace backend.Data.Dto
         public string Author { get; set; }
         public int ReviewId { get; set; }
         public string Content { get; set; }
+        public string Created { get; set; }
+        public bool IsUpdated { get; set; }
+        public string Updated { get; set; }
     }
 }

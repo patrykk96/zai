@@ -230,6 +230,9 @@ namespace backend.Services
                     Author = commentOwnerName,
                     ReviewId = comment.ReviewId,
                     Content = comment.Content,
+                    Created = comment.Created.ToString("dd-MM-yyyy HH:mm"),
+                    IsUpdated = comment.Updated != DateTime.MinValue,
+                    Updated = comment.Updated.ToString("dd-MM-yyyy HH:mm")
                 };
 
                 commentsToSend.Add(m);

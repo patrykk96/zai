@@ -1,5 +1,6 @@
 import * as types from "./actionTypes";
 import axios from "axios";
+import setApiSettings from "api/SetApi.js";
 
 export const registerStart = () => {
   return {
@@ -66,7 +67,7 @@ export const login = (user) => {
         localStorage.setItem("token", response.data.successResult.token);
         localStorage.setItem("username", response.data.successResult.username);
         dispatch(loginSuccess(response.data.successResult.token));
-        //window.location.reload();
+        setApiSettings();
       })
       .catch((error) => {
         dispatch(loginFailed(error.response.data));

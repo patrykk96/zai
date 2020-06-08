@@ -48,14 +48,14 @@ var routes = [
   },
   {
     path: "/reviewAdd/:movieId",
-    name: "Dodaj recenzję",
+    name: "Recenzje",
     icon: "tim-icons icon-badge",
     component: ReviewAdd,
     layout: "/main",
   },
   {
     path: "/reviewUpdate/:reviewId",
-    name: "Zaktualizuj recenzję",
+    name: "Recenzje",
     icon: "tim-icons icon-badge",
     component: ReviewUpdate,
     layout: "/main",
@@ -69,7 +69,7 @@ var routes = [
   },
   {
     path: "/review/:reviewId",
-    name: "Szczegóły",
+    name: "Recenzje",
     icon: "tim-icons icon-badge",
     component: ReviewDetails,
     layout: "/main",

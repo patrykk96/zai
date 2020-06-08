@@ -154,13 +154,16 @@ namespace backend.Services
                 return result;
             }
 
+            var reviewOwner = await _userManager.FindByIdAsync(review.UserId);
+            var reviewOwnerName = reviewOwner.UserName;
+
             //tworze obiekt z recenzja i zwracam go
             var reviewToSend = new ReviewDto()
             {
                 ReviewId = review.Id,
                 Content = review.Content,
                 Rating = review.Score,
-                Author = review.User.UserName,
+                Author = reviewOwnerName,
                 IsAuthor = review.UserId == loggedInUserId ? true : false,
                 MovieId = review.MovieId,
                 MovieName = movie.Name
@@ -227,12 +230,15 @@ namespace backend.Services
                     movieName = movie.Name;
                 }
 
+                var reviewOwner = await _userManager.FindByIdAsync(review.UserId);
+                var reviewOwnerName = reviewOwner.UserName;
+
                 var m = new ReviewDto()
                 {
                     ReviewId = review.Id,
                     Content = reviewContent,
                     Rating = review.Score,
-                    Author = review.User.UserName,
+                    Author = reviewOwnerName,
                     MovieId = review.MovieId,
                     MovieName = movieName
                 };
