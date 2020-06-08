@@ -2,7 +2,7 @@ import React from "react";
 import Rating from "react-rating";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-
+import Comments from "components/Comments/Comments";
 import Spinner from "components/Spinner";
 import * as movieReviewActions from "../store/actions/movieReviewActions";
 import "./css/MovieDetails.css";
@@ -21,7 +21,7 @@ class ReviewDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: null,
+      reviewId: null,
     };
   }
 
@@ -29,7 +29,7 @@ class ReviewDetails extends React.Component {
     const {
       match: { params },
     } = this.props;
-    this.setState({ id: params.movieId });
+    this.setState({ reviewId: params.reviewId });
     this.props.movieReviewGet(params.reviewId);
   }
 
@@ -91,6 +91,7 @@ class ReviewDetails extends React.Component {
               <br />
               <p className="movieDescription">{this.props.review.content}</p>
             </CardBody>
+            <Comments reviewId={this.state.reviewId}></Comments>
           </Card>
         )}
       </div>
