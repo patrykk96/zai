@@ -7,5 +7,6 @@ namespace backend.Data.Dto
     public class LoginDto : BaseDto
     {
         public object Token { get; set; }
+        public string Username { get; set; }
     }
 }

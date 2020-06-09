@@ -19,15 +19,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
-import { createStore, applyMiddleware, combineReducers } from "redux"
+import { createStore, applyMiddleware, combineReducers } from "redux";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { composeWithDevTools } from "redux-devtools-extension";
 
-import thunk from "redux-thunk"
+import thunk from "redux-thunk";
 import AdminLayout from "layouts/Admin/Admin";
 import AuthLayout from "layouts/Auth/Auth";
-import setApiSettings from 'api/SetApi.js';
+import setApiSettings from "api/SetApi.js";
 import Logout from "layouts/Auth/Logout";
 
 import "assets/scss/black-dashboard-react.scss";
@@ -36,13 +36,17 @@ import "assets/css/nucleo-icons.css";
 
 import authReducer from "store/reducers/authReducer";
 import movieReducer from "store/reducers/movieReducer";
+import movieReviewReducer from "store/reducers/movieReviewReducer";
+import commentReducer from "store/reducers/commentReducer";
 
 setApiSettings();
 const hist = createBrowserHistory();
 
 const rootReducer = combineReducers({
   authReducer: authReducer,
-  movieReducer: movieReducer
+  movieReducer: movieReducer,
+  movieReviewReducer: movieReviewReducer,
+  commentReducer: commentReducer,
 });
 
 const store = createStore(
@@ -50,13 +54,13 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(thunk))
 );
 
-const app =(
+const app = (
   <Provider store={store}>
     <BrowserRouter>
       <Router history={hist}>
         <Switch>
-          <Route path="/main" render={props => <AdminLayout {...props} />} />
-          <Route path="/auth" render={props => <AuthLayout {...props} />} />
+          <Route path="/main" render={(props) => <AdminLayout {...props} />} />
+          <Route path="/auth" render={(props) => <AuthLayout {...props} />} />
           <Route path="/logout" component={Logout} />
           <Redirect from="/" to="/main/dashboard" />
         </Switch>
@@ -65,7 +69,4 @@ const app =(
   </Provider>
 );
 
-ReactDOM.render(
-  app,
-  document.getElementById("root")
-);
+ReactDOM.render(app, document.getElementById("root"));
