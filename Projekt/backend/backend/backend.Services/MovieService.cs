@@ -428,6 +428,13 @@ namespace backend.Services
 
                 string userId = await _userManager.GetId(user);
 
+                if (string.IsNullOrEmpty(userId))
+                {
+                    result.Error = "Nie znaleziono u¿ytkownika";
+
+                    return result;
+                }
+
                 List<MovieDto> moviesToSend = new List<MovieDto>();
 
                 foreach (var movie in movies)
